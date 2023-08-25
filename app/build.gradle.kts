@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.immutable)
 
     implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi)
     implementation(libs.logging.interceptor)
 
     implementation(libs.bundles.orbit)

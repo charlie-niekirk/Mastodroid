@@ -5,4 +5,13 @@ option java_multiple_files = true;
 
 message Preferences {
   bool isLoggedIn = 1;
+  string client_id = 2;
+  string client_secret = 3;
+
+  message ServerConfig {
+    string server_url = 1;
+    string access_token = 2;
+  }
+
+  repeated ServerConfig servers = 4;
 }
