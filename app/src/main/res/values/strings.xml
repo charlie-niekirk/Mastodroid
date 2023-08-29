@@ -5,4 +5,8 @@
     <string name="join_default_server">Join mastodon.social</string>
     <string name="login">Login</string>
     <string name="or_seperator">or</string>
+    <string name="login_title">Login</string>
+    <string name="back">Back</string>
+    <string name="server_search_label">Search for server</string>
+    <string name="users_format">Users: %1$d</string>
 </resources>

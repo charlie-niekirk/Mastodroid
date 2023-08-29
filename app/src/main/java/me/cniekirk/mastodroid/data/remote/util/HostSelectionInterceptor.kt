@@ -1,4 +1,4 @@
-package me.cniekirk.mastodroid.data.remote
+package me.cniekirk.mastodroid.data.remote.util
 
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor

@@ -28,10 +28,11 @@ import me.cniekirk.mastodroid.R
 import me.cniekirk.mastodroid.ui.theme.MastodroidTheme
 
 @Composable
-fun OnboardingScreen(
+fun LandingScreen(
     onJoinDefaultClick: () -> Unit,
     onSelectServerClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    onLoginClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -74,7 +75,7 @@ fun OnboardingScreen(
         }
         HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 24.dp))
         TextButton(
-            onClick = {}
+            onClick = { onLoginClick() }
         ) {
             Text(
                 text = stringResource(id = R.string.login),
@@ -92,10 +93,11 @@ fun OnboardingScreen(
 fun OnboardingScreenContentPreview() {
     MastodroidTheme {
         Surface {
-            OnboardingScreen(
-                onJoinDefaultClick = { /*TODO*/ },
-                onSelectServerClick = { /*TODO*/ },
-                onCancelClick = { /*TODO*/ }
+            LandingScreen(
+                onJoinDefaultClick = { /* no-op */ },
+                onSelectServerClick = { /* no-op */ },
+                onCancelClick = { /* no-op */ },
+                onLoginClick = { /* no-op */ }
             )
         }
     }

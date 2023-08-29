@@ -1,4 +1,4 @@
-package me.cniekirk.mastodroid.data.remote
+package me.cniekirk.mastodroid.data.remote.services
 
 import me.cniekirk.mastodroid.data.model.response.RegisterClientResponse
 import retrofit2.Response

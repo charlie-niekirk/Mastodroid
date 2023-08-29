@@ -1,4 +1,4 @@
-package me.cniekirk.mastodroid.data.remote
+package me.cniekirk.mastodroid.data.remote.util
 
 import retrofit2.Response
 import timber.log.Timber

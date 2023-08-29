@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,6 +26,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
+import me.cniekirk.mastodroid.features.home.login.LandingScreen
+import me.cniekirk.mastodroid.features.home.login.LoginScreen
+import me.cniekirk.mastodroid.features.home.login.LoginViewModel
 import me.cniekirk.mastodroid.ui.theme.ContentType
 import me.cniekirk.mastodroid.ui.theme.NavigationType
 
@@ -93,14 +97,25 @@ fun NavGraphBuilder.homeGraph(
     features: List<DisplayFeature>
 ) {
     navigation(
-        startDestination = HomeDestination.FeedListDetail.route,
+        startDestination = HomeDestination.Landing.route,
         route = TabDestination.Home.route
     ) {
         composable(route = HomeDestination.FeedListDetail.route) {
 
         }
+        composable(route = HomeDestination.Landing.route) {
+            LandingScreen(
+                onJoinDefaultClick = {},
+                onSelectServerClick = {},
+                onCancelClick = {},
+                onLoginClick = {
+                    navController.navigate(HomeDestination.Login.route)
+                }
+            )
+        }
         composable(route = HomeDestination.Login.route) {
-
+            val viewModel: LoginViewModel = hiltViewModel()
+            LoginScreen(viewModel = viewModel)
         }
     }
 }
@@ -135,6 +150,8 @@ sealed class TabDestination(val label: String, val route: String, val icon: Imag
 sealed class HomeDestination(val route: String) {
 
     data object FeedListDetail : HomeDestination(route = "feedListDetail")
+
+    data object Landing : HomeDestination(route = "landing")
 
     data object Login : HomeDestination(route = "login")
 }

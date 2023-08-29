@@ -8,14 +8,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import me.cniekirk.mastodroid.data.remote.HostSelectionInterceptor
-import me.cniekirk.mastodroid.data.remote.MastodonService
+import me.cniekirk.mastodroid.data.remote.services.InstancesService
+import me.cniekirk.mastodroid.data.remote.util.HostSelectionInterceptor
+import me.cniekirk.mastodroid.data.remote.services.MastodonService
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Duration
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -52,6 +54,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("mastodon")
     fun provideRetrofit(okHttpClient: Lazy<OkHttpClient>, moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://mastodon.social")
@@ -62,6 +65,22 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMastodonService(retrofit: Retrofit): MastodonService =
+    @Named("instances")
+    fun provideInstancesRetrofit(okHttpClient: Lazy<OkHttpClient>, moshi: Moshi): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://instances.social")
+            .callFactory { okHttpClient.get().newCall(it) }
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMastodonService(@Named("mastodon") retrofit: Retrofit): MastodonService =
         retrofit.create(MastodonService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideInstancesService(@Named("instances") retrofit: Retrofit): InstancesService =
+        retrofit.create(InstancesService::class.java)
 }
