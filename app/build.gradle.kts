@@ -77,6 +77,8 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.datastore)
 
+    implementation(libs.bundles.paging)
+
     implementation(libs.moshi)
     implementation(libs.adaptive)
     ksp(libs.moshi.codegen)

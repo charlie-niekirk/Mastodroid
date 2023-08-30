@@ -14,4 +14,13 @@ interface InstancesService {
         @Query("count") count: Int = 100,
         @Query("q") query: String
     ): Response<ServerList>
+
+    @GET("api/1.0/instances/list")
+    suspend fun getInstances(
+        @Header("Authorization") authorization: String,
+        @Query("count") count: Int = 25,
+        @Query("sort_by") sortBy: String = "users",
+        @Query("sort_order") sortOrder: String = "desc",
+        @Query("min_id") minId: String?
+    ): Response<ServerList>
 }
