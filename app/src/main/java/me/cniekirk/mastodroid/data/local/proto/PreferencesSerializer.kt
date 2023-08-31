@@ -1,4 +1,4 @@
-package me.cniekirk.mastodroid.data.local
+package me.cniekirk.mastodroid.data.local.proto
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

@@ -30,6 +30,7 @@ accompanist = "0.31.3-beta"
 coroutines-test = "1.7.3"
 paging = "3.1.1"
 paging-compose = "3.2.0"
+room = "2.5.2"
 
 
 [libraries]
@@ -79,6 +80,11 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 adaptive = { group = "com.google.accompanist", name = "accompanist-adaptive", version.ref = "accompanist" }
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
+
+room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

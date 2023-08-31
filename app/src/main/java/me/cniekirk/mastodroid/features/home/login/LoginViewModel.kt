@@ -12,17 +12,19 @@ import kotlinx.coroutines.flow.map
 import me.cniekirk.mastodroid.data.model.response.Instance
 import me.cniekirk.mastodroid.data.remote.paging.InstancesPagingSource
 import me.cniekirk.mastodroid.domain.model.UiInstance
+import me.cniekirk.mastodroid.domain.usecase.GetServersUseCase
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val instancesPagingSource: InstancesPagingSource
+    private val getServersUseCase: GetServersUseCase
 ) : ViewModel(), ContainerHost<LoginState, LoginEffect> {
 
     override val container = container<LoginState, LoginEffect>(LoginState()) {
@@ -32,30 +34,14 @@ class LoginViewModel @Inject constructor(
     @OptIn(OrbitExperimental::class)
     fun queryChanged(query: String) = blockingIntent {
         reduce { state.copy(query = query) }
+
     }
 
-    private fun getServers() = intent {
-        val pager = Pager(
-            PagingConfig(pageSize = 25)
-        ) {
-            instancesPagingSource
-        }.flow
-            .map { pagingData ->
-                pagingData.map { it.toUiInstance() }.filter { it.name.contains(state.query) }
-            }
-            .cachedIn(viewModelScope)
-        reduce { state.copy(pager = pager) }
+    private fun getServers(query: String) = intent {
+
     }
 
     fun onServerSelected(id: Int) = intent {
 
-    }
-
-    private fun Instance.toUiInstance(): UiInstance {
-        return UiInstance(
-            this.name ?: "",
-            this.activeUsers ?: 0,
-            this.id ?: ""
-        )
     }
 }

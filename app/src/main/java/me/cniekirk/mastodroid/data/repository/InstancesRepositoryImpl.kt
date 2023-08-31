@@ -11,8 +11,8 @@ class InstancesRepositoryImpl @Inject constructor(
     private val instancesService: InstancesService
 ) : InstancesRepository {
 
-    override suspend fun getInstances(query: String): Result<ServerList> {
-        return safeApiCall { instancesService.getInstances("Bearer $TOKEN", query = query) }
+    override suspend fun getInstances(): Result<ServerList> {
+        return safeApiCall { instancesService.getInstances("Bearer $TOKEN", count = 1000) }
     }
 
     companion object {

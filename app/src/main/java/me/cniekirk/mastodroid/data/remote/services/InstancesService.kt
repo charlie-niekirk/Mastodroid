@@ -20,7 +20,6 @@ interface InstancesService {
         @Header("Authorization") authorization: String,
         @Query("count") count: Int = 25,
         @Query("sort_by") sortBy: String = "users",
-        @Query("sort_order") sortOrder: String = "desc",
-        @Query("min_id") minId: String?
+        @Query("sort_order") sortOrder: String = "desc"
     ): Response<ServerList>
 }

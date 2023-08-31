@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import me.cniekirk.mastodroid.data.local.PreferencesSerializer
+import me.cniekirk.mastodroid.data.local.proto.PreferencesSerializer
 import me.cniekirk.mastodroid.datastore.Preferences
 import javax.inject.Singleton
 
