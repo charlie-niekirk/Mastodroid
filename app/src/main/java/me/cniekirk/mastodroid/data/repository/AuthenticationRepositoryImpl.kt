@@ -2,7 +2,7 @@ package me.cniekirk.mastodroid.data.repository
 
 import androidx.datastore.core.DataStore
 import me.cniekirk.mastodroid.data.model.response.RegisterClientResponse
-import me.cniekirk.mastodroid.data.remote.services.MastodonService
+import me.cniekirk.network.service.MastodonService
 import me.cniekirk.mastodroid.data.remote.util.Result
 import me.cniekirk.mastodroid.data.remote.util.safeApiCall
 import me.cniekirk.mastodroid.datastore.Preferences
@@ -10,7 +10,7 @@ import me.cniekirk.mastodroid.domain.repository.AuthenticationRepository
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
-    private val mastodonService: MastodonService,
+    private val mastodonService: me.cniekirk.network.service.MastodonService,
     private val dataStore: DataStore<Preferences>
 ) : AuthenticationRepository {
 

@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.com.google.devtools.ksp) apply false
     alias(libs.plugins.com.google.firebase.crashlytics) apply false
+    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.org.jetbrains.kotlin.jvm) apply false
 //    alias(libs.plugins.com.google.gms.google.services) apply false
 }
 

@@ -3,12 +3,12 @@ package me.cniekirk.mastodroid.data.remote.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.cniekirk.mastodroid.data.model.response.Instance
-import me.cniekirk.mastodroid.data.remote.services.InstancesService
+import me.cniekirk.network.service.InstancesService
 import timber.log.Timber
 import javax.inject.Inject
 
 class InstancesPagingSource @Inject constructor(
-    private val instancesService: InstancesService
+    private val instancesService: me.cniekirk.network.service.InstancesService
 ) : PagingSource<String, Instance>() {
 
     private var previous: String? = null

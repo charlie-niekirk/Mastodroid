@@ -15,4 +15,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mastodroid"
 include(":app")
- 
+include(":core:network")
+include(":core:ui")
+include(":core:data")
+include(":core:datastore")
+include(":build-logic:convention")

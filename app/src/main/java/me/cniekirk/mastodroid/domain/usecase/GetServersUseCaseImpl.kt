@@ -14,7 +14,7 @@ class GetServersUseCaseImpl @Inject constructor(
 ) : GetServersUseCase {
 
     override suspend fun invoke(query: String): Result<ImmutableList<UiInstance>> {
-        return when (val response = instancesRepository.getInstances()) {
+        return when (val response = instancesRepository.getAllInstances()) {
             is Result.Failure -> response
             is Result.Success -> {
                 Result.Success(response.data.instances?.filterNotNull()?.toUiInstances() ?: persistentListOf())
