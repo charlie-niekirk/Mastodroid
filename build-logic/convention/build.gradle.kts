@@ -31,5 +31,37 @@ gradlePlugin {
             id = "mastodroid.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidFirebase") {
+            id = "mastodroid.android.firebase"
+            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
+        }
+        register("androidApplicationCompose") {
+            id = "mastodroid.android.application.compose"
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
+        }
+        register("androidFeature") {
+            id = "mastodroid.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("androidLibrary") {
+            id = "mastodroid.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = "mastodroid.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "mastodroid.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
+        register("androidTest") {
+            id = "mastodroid.android.test"
+            implementationClass = "AndroidTestConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "mastodroid.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
     }
 }

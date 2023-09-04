@@ -1,26 +1,16 @@
 import com.google.protobuf.gradle.id
 
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    kotlin("kapt")
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.com.google.devtools.ksp)
-    alias(libs.plugins.com.google.protobuf)
-    alias(libs.plugins.com.google.firebase.crashlytics)
-//    alias(libs.plugins.com.google.gms.google.services)
-    id(libs.plugins.parcelize.get().pluginId)
+    id("mastodroid.android.application")
+    id("mastodroid.android.application.compose")
+    id("mastodroid.android.hilt")
 }
 
 android {
     namespace = "me.cniekirk.mastodroid"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "me.cniekirk.mastodroid"
-        minSdk = 26
-        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -38,20 +28,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -83,7 +59,7 @@ dependencies {
     implementation(libs.adaptive)
     ksp(libs.moshi.codegen)
 
-    implementation(libs.hilt)
+    implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
     kapt(libs.hilt.compiler)
 

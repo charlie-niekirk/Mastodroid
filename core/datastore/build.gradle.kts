@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "me.cniekirk.datastore"
+    namespace = "me.cniekirk.mastodroid.core.datastore"
 
     defaultConfig {
         consumerProguardFiles("consumer-rules.pro")

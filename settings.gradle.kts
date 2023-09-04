@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -13,10 +14,11 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Mastodroid"
+rootProject.name = "mastodroid"
 include(":app")
+include(":core:common")
 include(":core:network")
 include(":core:ui")
 include(":core:data")
 include(":core:datastore")
-include(":build-logic:convention")
+include(":core:testing")
