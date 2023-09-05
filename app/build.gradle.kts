@@ -1,5 +1,3 @@
-import com.google.protobuf.gradle.id
-
 plugins {
     id("mastodroid.android.application")
     id("mastodroid.android.application.compose")
@@ -51,13 +49,12 @@ dependencies {
     implementation(libs.material3)
 
     implementation(libs.navigation.compose)
-    implementation(libs.datastore)
 
     implementation(libs.bundles.paging)
 
     implementation(libs.moshi)
     implementation(libs.adaptive)
-    ksp(libs.moshi.codegen)
+//    ksp(libs.moshi.codegen)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
@@ -69,7 +66,6 @@ dependencies {
 
     implementation(libs.androidx.material3.window.size)
 
-    implementation(libs.protobuf)
     implementation(libs.immutable)
 
     implementation(libs.retrofit)
@@ -81,8 +77,8 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.room)
-    ksp(libs.room.compiler)
+//    implementation(libs.room)
+//    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
@@ -94,19 +90,4 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.24.0"
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                id("java") {
-                    option("lite")
-                }
-            }
-        }
-    }
 }

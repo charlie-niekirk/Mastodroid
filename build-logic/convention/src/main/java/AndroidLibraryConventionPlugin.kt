@@ -1,5 +1,6 @@
 import com.android.build.gradle.LibraryExtension
 import me.cniekirk.mastodroid.configureKotlinAndroid
+import me.cniekirk.mastodroid.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -19,6 +20,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 defaultConfig.targetSdk = 34
             }
             dependencies {
+                add("implementation", libs.findLibrary("timber").get())
                 add("testImplementation", kotlin("test"))
                 add("testImplementation", project(":core:testing"))
                 add("androidTestImplementation", kotlin("test"))
