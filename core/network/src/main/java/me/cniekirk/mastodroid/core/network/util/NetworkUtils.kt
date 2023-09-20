@@ -1,37 +1,11 @@
 package me.cniekirk.mastodroid.core.network.util
 
-import retrofit2.Response
+import me.cniekirk.mastodroid.core.common.util.NetworkError
+import me.cniekirk.mastodroid.core.common.util.RemoteServiceError
 import me.cniekirk.mastodroid.core.common.util.Result
+import me.cniekirk.mastodroid.core.common.util.UnexpectedError
+import retrofit2.Response
 import timber.log.Timber
-
-class UnexpectedError : Error() {
-
-    override fun toString(): String {
-        return "UnexpectedError"
-    }
-}
-
-
-/**
- * Represents an error in which the server could not be reached.
- */
-class NetworkError : Error() {
-
-    override fun toString(): String {
-        return "NetworkError"
-    }
-}
-
-
-/**
- * An error response from the server.
- */
-open class RemoteServiceError : Error() {
-
-    override fun toString(): String {
-        return "RemoteServiceError(message: $message)"
-    }
-}
 
 suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>): Result<T> {
     return try {

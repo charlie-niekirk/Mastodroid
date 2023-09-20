@@ -63,5 +63,9 @@ gradlePlugin {
             id = "mastodroid.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = "mastodroid.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
     }
 }

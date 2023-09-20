@@ -1,19 +1,18 @@
 package me.cniekirk.mastodroid.data.repository
 
-import me.cniekirk.mastodroid.data.local.db.InstanceDao
-import me.cniekirk.mastodroid.data.local.db.InstanceEntity
+import me.cniekirk.mastodroid.core.database.dao.InstanceDao
+import me.cniekirk.mastodroid.core.database.model.InstanceEntity
 import me.cniekirk.network.service.InstancesService
-import me.cniekirk.mastodroid.data.remote.util.Result
 import me.cniekirk.mastodroid.data.remote.util.safeApiCall
 import me.cniekirk.mastodroid.domain.repository.InstancesRepository
 import javax.inject.Inject
 
 class InstancesRepositoryImpl @Inject constructor(
     private val instancesService: me.cniekirk.network.service.InstancesService,
-    private val instanceDao: InstanceDao
+    private val instanceDao: me.cniekirk.mastodroid.core.database.dao.InstanceDao
 ) : InstancesRepository {
 
-    override suspend fun getAllInstances(): Result<InstanceEntity> {
+    override suspend fun getAllInstances(): Result<me.cniekirk.mastodroid.core.database.model.InstanceEntity> {
         var instances = instanceDao.getAll()
         if (instances.isEmpty()) {
             val response = safeApiCall { instancesService.getInstances("Bearer $TOKEN", count = 1000) }

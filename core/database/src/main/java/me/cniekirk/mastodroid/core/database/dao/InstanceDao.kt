@@ -1,9 +1,10 @@
-package me.cniekirk.mastodroid.data.local.db
+package me.cniekirk.mastodroid.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import me.cniekirk.mastodroid.core.database.model.InstanceEntity
 
 @Dao
 interface InstanceDao {

@@ -1,4 +1,4 @@
-package me.cniekirk.mastodroid.di
+package me.cniekirk.mastodroid.core.database.di
 
 import android.content.Context
 import androidx.room.Room
@@ -7,8 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import me.cniekirk.mastodroid.data.local.db.InstanceDao
-import me.cniekirk.mastodroid.data.local.db.InstanceDatabase
+import me.cniekirk.mastodroid.core.database.dao.InstanceDao
+import me.cniekirk.mastodroid.core.database.InstanceDatabase
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +20,7 @@ object DatabaseModule {
     fun provideInstanceDatabase(@ApplicationContext context: Context): InstanceDatabase {
         return Room.databaseBuilder(
             context,
-            InstanceDatabase::class.java,
+            me.cniekirk.mastodroid.core.database.InstanceDatabase::class.java,
             "instance-database"
         ).build()
     }

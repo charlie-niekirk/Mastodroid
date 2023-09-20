@@ -77,12 +77,8 @@ dependencies {
 
     implementation(libs.timber)
 
-//    implementation(libs.room)
-//    ksp(libs.room.compiler)
-
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
-    testImplementation(libs.room.testing)
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
