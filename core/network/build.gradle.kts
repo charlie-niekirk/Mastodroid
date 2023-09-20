@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "me.cniekirk.network"
+    namespace = "me.cniekirk.mastodroid.core.network"
 }
 
 dependencies {

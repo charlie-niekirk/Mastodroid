@@ -17,15 +17,15 @@ class UserInstancesRepository @Inject constructor(
 ) : InstancesRepository {
 
     override suspend fun getAllInstances(): Result<ImmutableList<MastodonInstance>> {
-        val instances = instancesDao.getAll()
+        var instances = instancesDao.getAll()
         if (instances.isEmpty()) {
             if (!syncInstances()) {
                 return Result.Failure(NetworkError())
             }
         }
 
+        instances = instancesDao.getAll()
         val mappedInstances = instances.map { it.toMastodonInstance() }.toImmutableList()
-
         return Result.Success(mappedInstances)
     }
 
