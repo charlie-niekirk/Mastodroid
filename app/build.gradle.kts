@@ -59,27 +59,13 @@ dependencies {
 
     implementation(libs.navigation.compose)
 
-    implementation(libs.moshi)
     implementation(libs.adaptive)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
     kapt(libs.hilt.compiler)
 
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.analytics)
-    implementation(libs.crashlytics)
-
     implementation(libs.androidx.material3.window.size)
-
-    implementation(libs.immutable)
-
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.moshi)
-    implementation(libs.logging.interceptor)
-
-    implementation(libs.bundles.orbit)
-    testImplementation(libs.orbit.test)
 
     implementation(libs.timber)
 

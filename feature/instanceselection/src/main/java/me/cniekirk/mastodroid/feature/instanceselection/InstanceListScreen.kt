@@ -37,7 +37,10 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun InstanceRoute(viewModel: InstanceListViewModel = hiltViewModel()) {
+fun InstanceRoute(
+    viewModel: InstanceListViewModel = hiltViewModel(),
+    onBackPressed: () -> Unit,
+) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
@@ -54,7 +57,7 @@ fun InstanceRoute(viewModel: InstanceListViewModel = hiltViewModel()) {
 
     InstanceScreen(
         state = state,
-        onBackPressed = { /*TODO*/ },
+        onBackPressed = { onBackPressed() },
         onQueryChanged = viewModel::queryChanged
     )
 }

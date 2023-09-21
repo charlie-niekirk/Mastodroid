@@ -36,7 +36,7 @@ internal fun OnboardingScreen(
     ) {
         Text(
             modifier = Modifier.padding(top = 64.dp),
-            text = stringResource(id = R.string.join_server_title),
+            text = stringResource(id = R.string.get_started_title),
             style = MaterialTheme.typography.titleLarge
         )
         Image(
