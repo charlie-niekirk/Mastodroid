@@ -69,7 +69,7 @@ analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 protobuf = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "proto" }
-protobuf-protoc = { group = "com.google.protobuf", name = "protobuf-protoc", version.ref = "proto" }
+protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "proto" }
 immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "immutable" }
 
 paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }

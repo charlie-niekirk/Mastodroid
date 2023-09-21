@@ -11,7 +11,7 @@ interface InstancesService {
     @GET("api/1.0/instances/list")
     suspend fun getInstances(
         @Header("Authorization") authorization: String,
-        @Query("count") count: Int = 25,
+        @Query("count") count: Int = 500,
         @Query("sort_by") sortBy: String = "users",
         @Query("sort_order") sortOrder: String = "desc"
     ): Response<NetworkServerList>

@@ -1,6 +1,7 @@
 plugins {
     id("mastodroid.android.library")
     id("mastodroid.android.hilt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -14,6 +15,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.moshi)
     implementation(libs.logging.interceptor)
+    implementation(libs.moshi)
+    ksp(libs.moshi.codegen)
 
     testImplementation(project(":core:testing"))
 }

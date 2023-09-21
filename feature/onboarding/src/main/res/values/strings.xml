@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="join_server_title">Join a server</string>
+    <string name="join_another_server">Join another server</string>
+    <string name="join_default_server">Join mastodon.social</string>
+    <string name="login">Login</string>
+    <string name="or_seperator">or</string>
+    <string name="back">Back</string>
+</resources>

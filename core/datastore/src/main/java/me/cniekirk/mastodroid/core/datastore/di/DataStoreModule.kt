@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import me.cniekirk.mastodroid.core.datastore.PreferencesSerializer
+import me.cniekirk.mastodroid.datastore.Preferences
 import javax.inject.Singleton
 
 private const val DATA_STORE_FILE_NAME = "prefs.proto"

@@ -39,6 +39,15 @@ android {
 
 dependencies {
 
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
+
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:instanceselection"))
+
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
@@ -50,11 +59,8 @@ dependencies {
 
     implementation(libs.navigation.compose)
 
-    implementation(libs.bundles.paging)
-
     implementation(libs.moshi)
     implementation(libs.adaptive)
-//    ksp(libs.moshi.codegen)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)

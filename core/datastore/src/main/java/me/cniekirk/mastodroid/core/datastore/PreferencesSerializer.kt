@@ -3,6 +3,7 @@ package me.cniekirk.mastodroid.core.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import me.cniekirk.mastodroid.datastore.Preferences
 import java.io.InputStream
 import java.io.OutputStream
 

@@ -11,8 +11,8 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import dagger.hilt.android.AndroidEntryPoint
-import me.cniekirk.mastodroid.features.core.AppRoot
-import me.cniekirk.mastodroid.ui.theme.MastodroidTheme
+import me.cniekirk.mastodroid.core.AppRoot
+import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -22,9 +22,6 @@ protobuf {
                 register("java") {
                     option("lite")
                 }
-                register("kotlin") {
-                    option("lite")
-                }
             }
         }
     }
