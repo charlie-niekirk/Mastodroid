@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
 
+    implementation(project(":feature:feed"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:instanceselection"))
 

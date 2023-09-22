@@ -13,4 +13,6 @@ dependencies {
     api(libs.ui.tooling)
     api(libs.ui.tooling.preview)
     api(libs.material3)
+
+    testImplementation(project(":core:testing"))
 }

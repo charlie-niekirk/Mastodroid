@@ -1,5 +1,8 @@
 package me.cniekirk.mastodroid.core
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -13,6 +16,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -27,9 +32,11 @@ import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
 import me.cniekirk.mastodroid.core.designsystem.ContentType
 import me.cniekirk.mastodroid.core.designsystem.NavigationType
+import me.cniekirk.mastodroid.feature.feed.navigation.feedScreen
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListScreen
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
 import me.cniekirk.mastodroid.feature.onboarding.navigation.ONBOARDING_NAVIGATION_ROUTE
+import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
 
 val tabs = listOf(
@@ -48,7 +55,7 @@ fun MastodroidNavHost(
     navigationType: NavigationType,
     modifier: Modifier = Modifier
 ) {
-
+    val bottomBarState = rememberSaveable { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -56,26 +63,32 @@ fun MastodroidNavHost(
         NavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
                 bottomBar = {
-                    NavigationBar {
-                        tabs.forEachIndexed { index, item ->
-                            NavigationBarItem(
-                                icon = { Icon(item.icon, contentDescription = item.icon.name) },
-                                label = { Text(item.label) },
-                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                                onClick = {
-                                    navController.navigate(item.route) {
-                                        // Pop up to the start destination of the graph to
-                                        // avoid building up a large stack of destinations
-                                        // on the back stack as users select items
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                    AnimatedVisibility(
+                        visible = bottomBarState.value,
+                        enter = slideInVertically(initialOffsetY = { -it }),
+                        exit = slideOutVertically(targetOffsetY = { -it })
+                    ) {
+                        NavigationBar {
+                            tabs.forEachIndexed { index, item ->
+                                NavigationBarItem(
+                                    icon = { Icon(item.icon, contentDescription = item.icon.name) },
+                                    label = { Text(item.label) },
+                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    onClick = {
+                                        navController.navigate(item.route) {
+                                            // Pop up to the start destination of the graph to
+                                            // avoid building up a large stack of destinations
+                                            // on the back stack as users select items
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            // Restore state when reselecting a previously selected item
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        // Restore state when reselecting a previously selected item
-                                        restoreState = true
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -86,7 +99,14 @@ fun MastodroidNavHost(
                     startDestination = TabDestination.Home.route
                 ) {
                     // TrackBuddy search screen
-                    homeGraph(navController, isExpandedWindowSize, displayFeatures)
+                    homeGraph(
+                        navController,
+                        isExpandedWindowSize,
+                        displayFeatures,
+                        bottomBarState.value
+                    ) { shouldShowBottomBar ->
+                        bottomBarState.value = shouldShowBottomBar
+                    }
                 }
             }
         }
@@ -99,15 +119,18 @@ fun MastodroidNavHost(
 fun NavGraphBuilder.homeGraph(
     navController: NavController,
     isExpandedWindowSize: Boolean,
-    features: List<DisplayFeature>
+    features: List<DisplayFeature>,
+    shouldShowBottomBar: Boolean,
+    onChangeNavigationBarVisibility: (Boolean) -> Unit
 ) {
     navigation(
         startDestination = ONBOARDING_NAVIGATION_ROUTE,
         route = TabDestination.Home.route
     ) {
-        composable(route = HomeDestination.FeedListDetail.route) {
-
-        }
+        feedScreen(
+            navigateToLogin = { navController.navigateToOnboarding() },
+            onSuccess = { onChangeNavigationBarVisibility(true) }
+        )
         onboardingScreen(
             onJoinDefaultClicked = {},
             onSearchForServerClicked = {},
