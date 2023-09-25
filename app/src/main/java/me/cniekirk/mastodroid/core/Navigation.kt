@@ -32,7 +32,9 @@ import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
 import me.cniekirk.mastodroid.core.designsystem.ContentType
 import me.cniekirk.mastodroid.core.designsystem.NavigationType
+import me.cniekirk.mastodroid.feature.codereceiver.navigation.codeReceiverScreen
 import me.cniekirk.mastodroid.feature.feed.navigation.feedScreen
+import me.cniekirk.mastodroid.feature.feed.navigation.navigateToFeed
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListScreen
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
 import me.cniekirk.mastodroid.feature.onboarding.navigation.ONBOARDING_NAVIGATION_ROUTE
@@ -138,6 +140,9 @@ fun NavGraphBuilder.homeGraph(
         )
         instanceListScreen(
             onBackPressed = { navController.popBackStack() }
+        )
+        codeReceiverScreen(
+            tokenSaved = { navController.navigateToFeed() }
         )
     }
 }

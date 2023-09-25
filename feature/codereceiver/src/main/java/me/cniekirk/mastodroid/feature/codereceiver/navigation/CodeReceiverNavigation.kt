@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import me.cniekirk.mastodroid.feature.codereceiver.CodeReceiverRoute
 
 private const val CODE_ARG_ID = "code"
 const val URI = "https://verifymastodroidcode.com"
@@ -27,6 +28,8 @@ fun NavGraphBuilder.codeReceiverScreen(
         route = CODE_RECEIVER_NAVIGATION_ROUTE,
         deepLinks = listOf(navDeepLink { uriPattern = "$URI?$CODE_ARG_ID={$CODE_ARG_ID}" })
     ) {
-
+        CodeReceiverRoute {
+            tokenSaved()
+        }
     }
 }
