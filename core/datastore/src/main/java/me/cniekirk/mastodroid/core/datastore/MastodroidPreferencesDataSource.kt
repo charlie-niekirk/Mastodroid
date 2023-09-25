@@ -1,12 +1,12 @@
 package me.cniekirk.mastodroid.core.datastore
 
-import androidx.datastore.core.DataStore
+import kotlinx.coroutines.flow.Flow
+import me.cniekirk.mastodroid.core.model.UserData
 import me.cniekirk.mastodroid.datastore.Preferences
-import javax.inject.Inject
 
-class MastodroidPreferencesDataSource @Inject constructor(
-    private val dataStore: DataStore<Preferences>
-) {
+interface MastodroidPreferencesDataSource {
 
+    val userData: Flow<UserData>
 
+    suspend fun updateSelectedServerUid(selectedServerUid: Long)
 }

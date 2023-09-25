@@ -12,7 +12,7 @@ data class InstanceListState(
 
 sealed class InstanceListEffect {
 
-    data object InstanceSelected : InstanceListEffect()
+    data class InstanceSelectedLogin(val oauthUrl: String) : InstanceListEffect()
 
     data class ShowError(@StringRes val message: Int) : InstanceListEffect()
 }

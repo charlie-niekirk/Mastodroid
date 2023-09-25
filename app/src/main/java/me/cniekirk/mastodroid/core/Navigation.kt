@@ -134,7 +134,7 @@ fun NavGraphBuilder.homeGraph(
         onboardingScreen(
             onJoinDefaultClicked = {},
             onSearchForServerClicked = {},
-            onLoginClicked = { navController.navigateToInstanceList() }
+            onLoginClicked = { navController.navigateToInstanceList(true) }
         )
         instanceListScreen(
             onBackPressed = { navController.popBackStack() }

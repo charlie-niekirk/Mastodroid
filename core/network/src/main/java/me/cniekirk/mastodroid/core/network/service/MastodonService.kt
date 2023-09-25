@@ -12,7 +12,7 @@ interface MastodonService {
     @FormUrlEncoded
     suspend fun registerClient(
         @Field("client_name") clientName: String = "Mastodroid",
-        @Field("redirect_uris") redirectUris: String = "urn:ietf:wg:oauth:2.0:oob",
+        @Field("redirect_uris") redirectUris: String = "https://verifymastodroidcode.com",
         @Field("scopes") scopes: String = "read write follow push",
         @Field("website") website: String = "https://cniekirk.me"
     ): Response<NetworkRegisterClientResponse>

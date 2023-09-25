@@ -3,6 +3,7 @@ package me.cniekirk.mastodroid.feature.onboarding.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import me.cniekirk.mastodroid.core.designsystem.exitAnimation
 import me.cniekirk.mastodroid.core.designsystem.popEnterAnimation
 import me.cniekirk.mastodroid.feature.onboarding.OnboardingScreen
@@ -19,7 +20,7 @@ fun NavGraphBuilder.onboardingScreen(
     composable(
         route = ONBOARDING_NAVIGATION_ROUTE,
         exitTransition = { exitAnimation() },
-        popEnterTransition = { popEnterAnimation() }
+        popEnterTransition = { popEnterAnimation() },
     ) {
         OnboardingScreen(
             onJoinDefaultClicked = { onJoinDefaultClicked() },

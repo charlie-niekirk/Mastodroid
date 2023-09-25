@@ -64,7 +64,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.material3.window.size)
 

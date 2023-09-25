@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,11 +44,12 @@ fun InstanceRoute(
 ) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            InstanceListEffect.InstanceSelected -> {
-
+            is InstanceListEffect.InstanceSelectedLogin -> {
+                uriHandler.openUri(effect.oauthUrl)
             }
             is InstanceListEffect.ShowError -> {
                 Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -58,7 +60,8 @@ fun InstanceRoute(
     InstanceScreen(
         state = state,
         onBackPressed = { onBackPressed() },
-        onQueryChanged = viewModel::queryChanged
+        onQueryChanged = viewModel::queryChanged,
+        onItemClicked = viewModel::onInstanceSelected
     )
 }
 
@@ -67,7 +70,8 @@ fun InstanceRoute(
 fun InstanceScreen(
     state: InstanceListState,
     onBackPressed: () -> Unit,
-    onQueryChanged: (String) -> Unit
+    onQueryChanged: (String) -> Unit,
+    onItemClicked: (MastodonInstance) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -101,7 +105,9 @@ fun InstanceScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(state.servers) {
-                ServerItem(server = it)
+                ServerItem(server = it) { server ->
+                    onItemClicked(server)
+                }
             }
         }
     }
@@ -118,8 +124,11 @@ fun LoadingItem() {
 }
 
 @Composable
-fun ServerItem(server: MastodonInstance) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+fun ServerItem(
+    server: MastodonInstance,
+    onItemClicked: (MastodonInstance) -> Unit
+) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onItemClicked(server) }) {
         Column {
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp),
@@ -149,7 +158,8 @@ fun InstanceScreenPreview() {
             InstanceScreen(
                 state = InstanceListState(query = "mastodon", servers = servers),
                 onBackPressed = { /* no-op */ },
-                onQueryChanged = { /* no-op */ }
+                onQueryChanged = { /* no-op */ },
+                onItemClicked = { /* no-op */ }
             )
         }
     }
