@@ -26,18 +26,17 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
 import me.cniekirk.mastodroid.core.designsystem.ContentType
 import me.cniekirk.mastodroid.core.designsystem.NavigationType
 import me.cniekirk.mastodroid.feature.codereceiver.navigation.codeReceiverScreen
+import me.cniekirk.mastodroid.feature.feed.navigation.FEED_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.feed.navigation.feedScreen
 import me.cniekirk.mastodroid.feature.feed.navigation.navigateToFeed
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListScreen
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
-import me.cniekirk.mastodroid.feature.onboarding.navigation.ONBOARDING_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
 
@@ -67,7 +66,7 @@ fun MastodroidNavHost(
                 bottomBar = {
                     AnimatedVisibility(
                         visible = bottomBarState.value,
-                        enter = slideInVertically(initialOffsetY = { -it }),
+                        enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { -it })
                     ) {
                         NavigationBar {
@@ -126,7 +125,7 @@ fun NavGraphBuilder.homeGraph(
     onChangeNavigationBarVisibility: (Boolean) -> Unit
 ) {
     navigation(
-        startDestination = ONBOARDING_NAVIGATION_ROUTE,
+        startDestination = FEED_NAVIGATION_ROUTE,
         route = TabDestination.Home.route
     ) {
         feedScreen(

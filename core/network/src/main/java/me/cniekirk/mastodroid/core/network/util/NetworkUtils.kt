@@ -1,6 +1,7 @@
 package me.cniekirk.mastodroid.core.network.util
 
 import me.cniekirk.mastodroid.core.common.util.NetworkError
+import me.cniekirk.mastodroid.core.common.util.RemoteServiceAuthError
 import me.cniekirk.mastodroid.core.common.util.RemoteServiceError
 import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.common.util.UnexpectedError
@@ -13,7 +14,11 @@ suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>): Result<T> {
         if (response.isSuccessful) {
             Result.Success(response.body()!!)
         } else {
-            if (response.code() in 400..499) {
+            if (response.code() == 400) {
+                Result.Failure(RemoteServiceError())
+            } else if (response.code() == 401) {
+                Result.Failure(RemoteServiceAuthError())
+            } else if (response.code() in 400..499) {
                 Result.Failure(RemoteServiceError())
             } else if (response.code() in 500..599) {
                 Result.Failure(RemoteServiceError())

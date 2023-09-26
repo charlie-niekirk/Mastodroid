@@ -3,6 +3,7 @@ package me.cniekirk.mastodroid.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import me.cniekirk.mastodroid.core.database.model.ServerConfigurationEntity
 
@@ -15,7 +16,7 @@ interface ServerConfigurationDao {
     @Query("SELECT * FROM serverConfigurationEntity WHERE uid LIKE '%' || :uid || '%'")
     fun findByUid(uid: Long): List<ServerConfigurationEntity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOne(serverConfiguration: ServerConfigurationEntity): Long
 
     @Insert

@@ -8,7 +8,7 @@ import androidx.navigation.navDeepLink
 import me.cniekirk.mastodroid.feature.codereceiver.CodeReceiverRoute
 
 private const val CODE_ARG_ID = "code"
-const val URI = "https://verifymastodroidcode.com"
+const val URI = "mastodroid://verifycode"
 private const val CODE_RECEIVER_NAVIGATION_PREFIX = "code_receiver?$CODE_ARG_ID="
 const val CODE_RECEIVER_NAVIGATION_ROUTE = "$CODE_RECEIVER_NAVIGATION_PREFIX{$CODE_ARG_ID}"
 

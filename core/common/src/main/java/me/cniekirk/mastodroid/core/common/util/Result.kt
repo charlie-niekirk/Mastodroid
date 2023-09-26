@@ -34,3 +34,10 @@ open class RemoteServiceError : Error() {
         return "RemoteServiceError(message: $message)"
     }
 }
+
+open class RemoteServiceAuthError : Error() {
+
+    override fun toString(): String {
+        return "RemoteServiceError(message: $message)"
+    }
+}

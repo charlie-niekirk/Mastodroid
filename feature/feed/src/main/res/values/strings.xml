@@ -2,4 +2,5 @@
 <resources>
     <string name="feed_title">Mastodroid</string>
     <string name="settings_cd">Settings</string>
+    <string name="profile_image_cd">User profile image</string>
 </resources>

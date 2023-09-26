@@ -20,8 +20,9 @@ fun NavGraphBuilder.feedScreen(
         enterTransition = { enterAnimation() },
         popExitTransition = { popExitAnimation() }
     ) {
-        FeedRoute {
-            navigateToLogin()
-        }
+        FeedRoute(
+            navigateToLogin = { navigateToLogin() },
+            onSuccess = { onSuccess() }
+        )
     }
 }

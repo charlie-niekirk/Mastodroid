@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":core:model"))
 
     implementation(libs.immutable)
+    implementation(libs.paging)
 
     testImplementation(project(":core:testing"))
 }

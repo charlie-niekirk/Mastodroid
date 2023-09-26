@@ -8,5 +8,11 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:network"))
     implementation(libs.immutable)
+    implementation(libs.paging)
+    implementation(libs.paging.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.html.text)
+    implementation(libs.material.icons)
 }
