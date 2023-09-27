@@ -33,7 +33,7 @@ data class NetworkStatus(
     @Json(name = "language")
     val language: String?,
     @Json(name = "media_attachments")
-    val mediaAttachments: List<Any?>?,
+    val mediaAttachments: List<MediaAttachment>?,
     @Json(name = "mentions")
     val mentions: List<Any?>?,
     @Json(name = "muted")

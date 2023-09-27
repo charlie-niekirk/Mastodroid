@@ -1,11 +1,14 @@
 package me.cniekirk.mastodroid.feature.feed
 
+import android.text.Html
+import android.view.ViewStructure.HtmlInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -31,10 +35,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -42,10 +48,12 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.charlex.compose.HtmlText
+import de.charlex.compose.toAnnotatedString
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.feature.feed.ViewState.*
 import org.orbitmvi.orbit.compose.collectAsState
+import timber.log.Timber
 
 @Composable
 internal fun FeedRoute(
@@ -169,33 +177,44 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
             }
         }
 
-        HtmlText(
+        Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-            text = userFeedItem.content,
+            text = Html.fromHtml(userFeedItem.content, HtmlCompat.FROM_HTML_MODE_COMPACT).toAnnotatedString(),
             style = MaterialTheme.typography.bodyLarge
         )
 
-        Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        if (userFeedItem.mediaInfo.isNotEmpty()) {
+            // If there is media, show it
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(userFeedItem.mediaInfo.first().ratio),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(userFeedItem.mediaInfo.first().url)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null
+            )
+        }
+
+        Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
             Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {},
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription =
+                },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = userFeedItem.numComments.toString()
-                )
                 Image(
                     modifier = Modifier.padding(start = 4.dp),
-                    imageVector = Icons.Default.ChatBubbleOutline,
+                    imageVector = Icons.Default.ChatBubble,
                     contentDescription = null
+                )
+                Text(
+                    modifier = Modifier.padding(bottom = 3.dp, start = 8.dp),
+                    text = userFeedItem.numComments.toString()
                 )
             }
         }
-
-        // If there is media, show it
-//        AsyncImage(
-//            model = ,
-//            contentDescription =
-//        )
 
         HorizontalDivider()
     }
