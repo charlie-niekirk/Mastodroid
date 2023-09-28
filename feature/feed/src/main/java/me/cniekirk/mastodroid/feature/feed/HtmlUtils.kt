@@ -1,9 +1,10 @@
-package me.cniekirk.mastodroid.core.ui
+package me.cniekirk.mastodroid.feature.feed
 
 import android.graphics.Typeface
-import android.text.Spannable
+import android.text.Spanned
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
+import android.text.style.ParagraphStyle
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
 import android.text.style.UnderlineSpan
@@ -14,7 +15,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 
-fun Spannable.toAnnotatedString(primaryColor: Color): AnnotatedString {
+fun Spanned.toAnnotatedString(primaryColor: Color): AnnotatedString {
     val builder = AnnotatedString.Builder(this.toString())
     val copierContext = CopierContext(primaryColor)
     SpanCopier.entries.forEach { copier ->
@@ -101,7 +102,11 @@ private enum class SpanCopier {
                 style = when (styleSpan.style) {
                     Typeface.ITALIC -> SpanStyle(fontStyle = FontStyle.Italic)
                     Typeface.BOLD -> SpanStyle(fontWeight = FontWeight.Bold)
-                    Typeface.BOLD_ITALIC -> SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+                    Typeface.BOLD_ITALIC -> SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Italic
+                    )
+
                     else -> SpanStyle()
                 },
                 start = start,
@@ -109,6 +114,30 @@ private enum class SpanCopier {
             )
         }
     };
+//    },
+//    PARAGRAPH {
+//        override val spanClass = ParagraphStyle::class.java
+//        override fun copySpan(
+//            span: Any,
+//            start: Int,
+//            end: Int,
+//            destination: AnnotatedString.Builder,
+//            context: CopierContext
+//        ) {
+//            val styleSpan = span as StyleSpan
+//
+//            destination.addStyle(
+//                style = when (styleSpan.style) {
+//                    Typeface.ITALIC -> SpanStyle(fontStyle = FontStyle.Italic)
+//                    Typeface.BOLD -> SpanStyle(fontWeight = FontWeight.Bold)
+//                    Typeface.BOLD_ITALIC -> SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+//                    else -> SpanStyle()
+//                },
+//                start = start,
+//                end = end,
+//            )
+//        }
+//    };
 
     abstract val spanClass: Class<out CharacterStyle>
     abstract fun copySpan(span: Any, start: Int, end: Int, destination: AnnotatedString.Builder, context: CopierContext)

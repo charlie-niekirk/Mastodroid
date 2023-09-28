@@ -41,7 +41,7 @@ data class NetworkStatus(
     @Json(name = "poll")
     val poll: Any?,
     @Json(name = "reblog")
-    val reblog: Any?,
+    val reblog: NetworkStatus?,
     @Json(name = "reblogged")
     val reblogged: Boolean?,
     @Json(name = "reblogs_count")

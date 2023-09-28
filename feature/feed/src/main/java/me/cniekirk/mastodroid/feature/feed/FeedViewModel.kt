@@ -1,5 +1,8 @@
 package me.cniekirk.mastodroid.feature.feed
 
+import android.text.Spannable
+import android.text.Spanned
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -12,8 +15,9 @@ import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.data.mapper.toUserFeedItem
 import me.cniekirk.mastodroid.core.data.repository.AuthenticationRepository
 import me.cniekirk.mastodroid.core.data.repository.HomeFeedPagingSource
-import me.cniekirk.mastodroid.core.model.AuthStatus
-import me.cniekirk.mastodroid.core.model.AuthStatus.*
+import me.cniekirk.mastodroid.core.model.AuthStatus.LOGGED_IN
+import me.cniekirk.mastodroid.core.model.AuthStatus.NO_TOKEN
+import me.cniekirk.mastodroid.core.model.AuthStatus.TOKEN_EXPIRED
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -60,7 +64,16 @@ internal class FeedViewModel @Inject constructor(
                     homeFeedPagingSource
                 }.flow
                     .map { pagingData ->
-                        pagingData.map { networkStatus -> networkStatus.toUserFeedItem() }
+                        pagingData.map { networkStatus ->
+                            val item = networkStatus.toUserFeedItem()
+                            val reblogged = item.rebloggedPost
+                            item.copy(
+                                content = (item.content as Spanned).toAnnotatedString(Color.Blue),
+                                rebloggedPost = reblogged?.copy(
+                                    content = (reblogged.content as Spanned).toAnnotatedString(Color.Blue)
+                                )
+                            )
+                        }
                     }
                     .cachedIn(viewModelScope)
             )
