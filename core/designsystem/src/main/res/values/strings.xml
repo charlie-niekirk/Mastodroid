@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="enabled">Enabled</string>
+    <string name="not_enabled">Not enabled</string>
+</resources>

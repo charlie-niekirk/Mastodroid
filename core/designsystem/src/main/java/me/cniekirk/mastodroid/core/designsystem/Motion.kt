@@ -5,6 +5,8 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.unit.IntOffset
@@ -33,6 +35,33 @@ val emphasisedFloatSpec = tween<Float>(EMPHASISED_DURATION, ANIM_DELAY, easing)
 val emphasisedPopIntSpec = tween<IntOffset>(POP_DURATION, ANIM_DELAY, easing)
 val emphasisedPopFloatSpec = tween<Float>(POP_DURATION, ANIM_DELAY, easing)
 
+val activityDefaultEnter = {
+    scaleIn(
+        animationSpec = emphasisedFloatSpec,
+        initialScale = 0.9f
+    ) + fadeIn(emphasisedFloatSpec, OFF_SCREEN_ALPHA)
+}
+
+val activityDefaultExit = {
+    scaleOut(
+        animationSpec = emphasisedFloatSpec,
+        targetScale = 1.1f
+    ) + fadeOut(emphasisedFloatSpec, OFF_SCREEN_ALPHA)
+}
+
+val activityDefaultPopEnter = {
+    scaleIn(
+        animationSpec = emphasisedFloatSpec,
+        initialScale = 1.1f
+    ) + fadeIn(emphasisedFloatSpec, OFF_SCREEN_ALPHA)
+}
+
+val activityDefaultPopExit = {
+    scaleOut(
+        animationSpec = emphasisedFloatSpec,
+        targetScale = 0.9f
+    ) + fadeOut(emphasisedFloatSpec, OFF_SCREEN_ALPHA)
+}
 
 val enterAnimation = {
     slideInHorizontally(

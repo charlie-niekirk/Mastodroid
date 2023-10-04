@@ -31,6 +31,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,11 +45,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
+import me.cniekirk.mastodroid.core.model.MediaInfo
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.feature.feed.ViewState.AUTH_ERROR
 import me.cniekirk.mastodroid.feature.feed.ViewState.LOADING
@@ -123,7 +131,7 @@ internal fun FeedScreen(state: FeedState) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.weight(1f))
             }
-            else -> {
+            is LoadState.NotLoading -> {
                 LazyColumn(
                     modifier = Modifier.padding(top = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -297,7 +305,20 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
 @Preview
 @Composable
 private fun FeedScreenPreview() {
-    val state = FeedState()
+    val feedItem = UserFeedItem(
+        1,
+        "Example User",
+        "example",
+        "",
+        "1hr",
+        AnnotatedString("This is an example post and here's more text so that it spans more than one line."),
+        11,
+        12,
+        13,
+        persistentListOf()
+    )
+
+    val state = FeedState(viewState = SUCCESS, feedItems = MutableStateFlow(PagingData.from(listOf(feedItem, feedItem.copy(id = 2), feedItem.copy(id = 3)))))
     MastodroidTheme {
         Surface {
             FeedScreen(state)
