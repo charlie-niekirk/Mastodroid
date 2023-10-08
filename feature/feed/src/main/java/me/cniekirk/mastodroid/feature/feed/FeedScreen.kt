@@ -65,7 +65,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 internal fun FeedRoute(
     viewModel: FeedViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
-    onSuccess: () -> Unit
+    onSuccess: () -> Unit,
+    onSettingsPressed: () -> Unit
 ) {
     val state = viewModel.collectAsState().value
 
@@ -75,7 +76,9 @@ internal fun FeedRoute(
             LaunchedEffect(Unit) {
                 onSuccess()
             }
-            FeedScreen(state)
+            FeedScreen(state) {
+                onSettingsPressed()
+            }
         }
         AUTH_ERROR -> {
             LaunchedEffect(state) {
@@ -99,7 +102,10 @@ internal fun LoadingView() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun FeedScreen(state: FeedState) {
+internal fun FeedScreen(
+    state: FeedState,
+    onSettingsPressed: () -> Unit
+) {
     val items = state.feedItems.collectAsLazyPagingItems()
 
     Column(
@@ -115,7 +121,7 @@ internal fun FeedScreen(state: FeedState) {
             },
             actions = {
                 Icon(
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier.padding(end = 16.dp).clickable { onSettingsPressed() },
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings"
                 )
@@ -321,7 +327,7 @@ private fun FeedScreenPreview() {
     val state = FeedState(viewState = SUCCESS, feedItems = MutableStateFlow(PagingData.from(listOf(feedItem, feedItem.copy(id = 2), feedItem.copy(id = 3)))))
     MastodroidTheme {
         Surface {
-            FeedScreen(state)
+            FeedScreen(state) {}
         }
     }
 }

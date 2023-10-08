@@ -2,4 +2,17 @@
 <resources>
     <string name="settings_title">Settings</string>
     <string name="look_and_feel_heading">Look and feel</string>
+    <string name="animated_profile_images_title">Animated avatars</string>
+    <string name="animated_profile_images_subtext">Display animated profile avatars</string>
+    <string name="animated_emoji_title">Animated emoji</string>
+    <string name="animated_emoji_subtext">Display animated emoji in posts</string>
+    <string name="notifications_heading">Notifications</string>
+    <string name="follow_title">Follows</string>
+    <string name="follow_subtext">Get notified when you\'re followed</string>
+    <string name="reblog_title">Reblogs</string>
+    <string name="reblog_subtext">Get notified when someone reblogs your post</string>
+    <string name="mention_title">Mentions</string>
+    <string name="metion_subtext">Get notified when you\'re mentioned</string>
+    <string name="favourite_title">Favourites</string>
+    <string name="favourite_subtext">Get a notification when your posts are favourited</string>
 </resources>

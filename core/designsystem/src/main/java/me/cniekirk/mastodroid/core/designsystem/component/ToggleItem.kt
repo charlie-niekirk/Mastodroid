@@ -3,7 +3,10 @@ package me.cniekirk.mastodroid.core.designsystem.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -36,16 +39,16 @@ fun ToggleItem(
             .semantics(mergeDescendants = true) {
                 stateDescription = if (enabled) stateEnabled else stateNotEnabled
             }
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
+        Column(Modifier.widthIn()) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 4.dp).fillMaxWidth(0.75f),
                 text = subText,
                 style = MaterialTheme.typography.bodySmall
             )

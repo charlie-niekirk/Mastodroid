@@ -7,7 +7,8 @@ enum class Theme {
 }
 
 data class SettingsState(
-    val theme: Theme = Theme.SYSTEM
+    val theme: Theme = Theme.SYSTEM,
+    val animatedProfileImagesDisabled: Boolean = false
 )
 
 sealed class SettingsEffect {

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +40,8 @@ import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListS
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
 import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
+import me.cniekirk.mastodroid.feature.settings.navigation.navigateToSettings
+import me.cniekirk.mastodroid.feature.settings.navigation.settingsScreen
 
 val tabs = listOf(
     TabDestination.Home,
@@ -112,7 +115,9 @@ fun MastodroidNavHost(
             }
         }
         NavigationType.NAVIGATION_RAIL -> {
-
+//            NavigationRail {
+//
+//            }
         }
     }
 }
@@ -130,7 +135,10 @@ fun NavGraphBuilder.homeGraph(
     ) {
         feedScreen(
             navigateToLogin = { navController.navigateToOnboarding() },
-            onSuccess = { onChangeNavigationBarVisibility(true) }
+            onSuccess = { onChangeNavigationBarVisibility(true) },
+            onSettingsPressed = {
+                navController.navigateToSettings()
+            }
         )
         onboardingScreen(
             onJoinDefaultClicked = {},
@@ -143,6 +151,9 @@ fun NavGraphBuilder.homeGraph(
         codeReceiverScreen(
             tokenSaved = { navController.navigateToFeed() }
         )
+        settingsScreen() {
+            navController.popBackStack()
+        }
     }
 }
 

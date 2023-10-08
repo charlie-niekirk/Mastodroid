@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:instanceselection"))
     implementation(project(":feature:codereceiver"))
+    implementation(project(":feature:settings"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
