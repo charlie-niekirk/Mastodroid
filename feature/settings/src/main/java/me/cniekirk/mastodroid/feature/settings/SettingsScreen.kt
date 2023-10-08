@@ -1,9 +1,9 @@
 package me.cniekirk.mastodroid.feature.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,7 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
+import me.cniekirk.mastodroid.core.designsystem.component.ThemeSelection
 import me.cniekirk.mastodroid.core.designsystem.component.ToggleItem
+import me.cniekirk.mastodroid.core.model.Theme
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -24,19 +26,23 @@ fun SettingsRoute(
     val state = viewModel.collectAsState().value
 
     SettingsScreen(
+        state = state,
         disableAnimatedProfileImages = false,
         onDisableAnimatedProfileImagesClicked = { /*TODO*/ },
         disableAnimatedEmoji = false,
-        onDisableAnimatedEmojiClicked = { /*TODO*/ }
+        onDisableAnimatedEmojiClicked = { /*TODO*/ },
+        onThemeSelected = viewModel::onThemeSelected
     )
 }
 
 @Composable
 fun SettingsScreen(
+    state: SettingsState,
     disableAnimatedProfileImages: Boolean,
     onDisableAnimatedProfileImagesClicked: () -> Unit,
     disableAnimatedEmoji: Boolean,
-    onDisableAnimatedEmojiClicked: () -> Unit
+    onDisableAnimatedEmojiClicked: () -> Unit,
+    onThemeSelected: (Theme) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -50,6 +56,16 @@ fun SettingsScreen(
             text = stringResource(id = R.string.look_and_feel_heading),
             style = MaterialTheme.typography.bodySmall
         )
+
+        ThemeSelection(
+            modifier = Modifier.padding(top = 16.dp),
+            theme = state.theme,
+            onLightSelected = { onThemeSelected(Theme.LIGHT) },
+            onDarkSelected = { onThemeSelected(Theme.DARK) },
+            onSystemSelected = { onThemeSelected(Theme.SYSTEM) }
+        )
+
+        HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
 
         ToggleItem(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -106,9 +122,11 @@ fun SettingsScreen(
 @Preview
 @Composable
 fun SettingsScreenPreview() {
+    val state = SettingsState()
+
     MastodroidTheme {
         Surface {
-            SettingsScreen(false, {}, false, {})
+            SettingsScreen(state, false, {}, false, {}, {})
         }
     }
 }

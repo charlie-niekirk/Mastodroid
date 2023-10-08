@@ -1,13 +1,9 @@
 package me.cniekirk.mastodroid.feature.settings
 
-enum class Theme {
-    SYSTEM,
-    DARK,
-    LIGHT
-}
+import me.cniekirk.mastodroid.core.model.Theme
 
 data class SettingsState(
-    val theme: Theme = Theme.SYSTEM,
+    val theme: Theme = Theme.LIGHT,
     val animatedProfileImagesDisabled: Boolean = false
 )
 
