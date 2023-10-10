@@ -25,22 +25,8 @@ fun NavGraphBuilder.feedScreen(
         route = FEED_NAVIGATION_ROUTE,
         enterTransition = { enterAnimation() },
         popExitTransition = { popExitAnimation() },
-        exitTransition = {
-            // If navigating to settings
-            if (targetState.destination.route.equals(SETTINGS_ROUTE, true)) {
-                activityDefaultExit()
-            } else {
-                exitAnimation()
-            }
-        },
-        popEnterTransition = {
-            // If coming back from settings
-            if (initialState.destination.route.equals(SETTINGS_ROUTE, true)) {
-                activityDefaultPopEnter()
-            } else {
-                popEnterAnimation()
-            }
-        }
+        exitTransition = { exitAnimation() },
+        popEnterTransition = { popEnterAnimation() }
     ) {
         FeedRoute(
             navigateToLogin = { navigateToLogin() },

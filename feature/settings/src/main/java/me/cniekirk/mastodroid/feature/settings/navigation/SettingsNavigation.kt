@@ -17,6 +17,8 @@ fun NavGraphBuilder.settingsScreen(goBack: () -> Unit) {
         enterTransition = { activityDefaultEnter() },
         popExitTransition = { activityDefaultPopExit() }
     ) {
-        SettingsRoute()
+        SettingsRoute(
+            onClosePressed = { goBack() }
+        )
     }
 }

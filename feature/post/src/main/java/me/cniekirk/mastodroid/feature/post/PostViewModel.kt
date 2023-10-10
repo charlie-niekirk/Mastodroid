@@ -13,5 +13,5 @@ class PostViewModel @Inject constructor(
 
     override val container = container<PostState, PostEffect>(PostState())
 
-
+    
 }

@@ -31,7 +31,7 @@ fun AppRoot(
 
     val navController = rememberNavController()
 
-    MastodroidNavHost(
+    RootNavHost(
         navController = navController,
         contentType = contentType,
         displayFeatures = displayFeatures,

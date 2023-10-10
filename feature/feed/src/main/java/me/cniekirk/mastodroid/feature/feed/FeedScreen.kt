@@ -31,9 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -52,9 +49,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
-import me.cniekirk.mastodroid.core.model.MediaInfo
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.feature.feed.ViewState.AUTH_ERROR
 import me.cniekirk.mastodroid.feature.feed.ViewState.LOADING
@@ -76,6 +71,7 @@ internal fun FeedRoute(
             LaunchedEffect(Unit) {
                 onSuccess()
             }
+
             FeedScreen(state) {
                 onSettingsPressed()
             }
@@ -121,7 +117,9 @@ internal fun FeedScreen(
             },
             actions = {
                 Icon(
-                    modifier = Modifier.padding(end = 16.dp).clickable { onSettingsPressed() },
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clickable { onSettingsPressed() },
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings"
                 )
@@ -169,7 +167,7 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
         if (userFeedItem.rebloggedPost != null) {
             Row(
                 modifier = Modifier
-                    .semantics(mergeDescendants = true) {  }
+                    .semantics(mergeDescendants = true) { }
                     .padding(start = 16.dp, top = 8.dp)
             ) {
                 Icon(

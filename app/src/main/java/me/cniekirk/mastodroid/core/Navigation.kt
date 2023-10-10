@@ -12,12 +12,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,11 +27,15 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
 import me.cniekirk.mastodroid.core.designsystem.ContentType
 import me.cniekirk.mastodroid.core.designsystem.NavigationType
+import me.cniekirk.mastodroid.core.designsystem.activityDefaultExit
+import me.cniekirk.mastodroid.core.designsystem.activityDefaultPopEnter
 import me.cniekirk.mastodroid.feature.codereceiver.navigation.codeReceiverScreen
 import me.cniekirk.mastodroid.feature.feed.navigation.FEED_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.feed.navigation.feedScreen
@@ -51,7 +55,7 @@ val tabs = listOf(
 )
 
 @Composable
-fun MastodroidNavHost(
+fun RootNavHost(
     navController: NavHostController,
     contentType: ContentType,
     displayFeatures: List<DisplayFeature>,
@@ -59,8 +63,42 @@ fun MastodroidNavHost(
     navigationType: NavigationType,
     modifier: Modifier = Modifier
 ) {
-    val bottomBarState = rememberSaveable { mutableStateOf(false) }
+    NavHost(
+        navController = navController,
+        startDestination = RootDestinations.Tabs.route
+    ) {
+        composable(
+            RootDestinations.Tabs.route,
+            exitTransition = { activityDefaultExit() },
+            popEnterTransition = { activityDefaultPopEnter() }
+        ) {
+            val innerController = rememberNavController()
+            MastodroidTabContainer(
+                navController = innerController,
+                contentType = contentType,
+                displayFeatures = displayFeatures,
+                isExpandedWindowSize = isExpandedWindowSize,
+                navigationType = navigationType,
+                onSettingsPressed = { navController.navigateToSettings() }
+            )
+        }
+
+        settingsScreen { navController.popBackStack() }
+    }
+}
+
+@Composable
+fun MastodroidTabContainer(
+    navController: NavHostController,
+    contentType: ContentType,
+    displayFeatures: List<DisplayFeature>,
+    isExpandedWindowSize: Boolean,
+    navigationType: NavigationType,
+    modifier: Modifier = Modifier,
+    onSettingsPressed: () -> Unit
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isBottomBarVisible = rememberSaveable { mutableStateOf(false) }
     val currentDestination = navBackStackEntry?.destination
 
     when (navigationType) {
@@ -68,7 +106,7 @@ fun MastodroidNavHost(
             Scaffold(
                 bottomBar = {
                     AnimatedVisibility(
-                        visible = bottomBarState.value,
+                        visible = isBottomBarVisible.value,
                         enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { -it })
                     ) {
@@ -107,10 +145,11 @@ fun MastodroidNavHost(
                         navController,
                         isExpandedWindowSize,
                         displayFeatures,
-                        bottomBarState.value
-                    ) { shouldShowBottomBar ->
-                        bottomBarState.value = shouldShowBottomBar
-                    }
+                        onSettingsPressed = { onSettingsPressed() },
+                        onChangeNavigationBarVisibility = { isVisible ->
+                            isBottomBarVisible.value = isVisible
+                        }
+                    )
                 }
             }
         }
@@ -126,7 +165,7 @@ fun NavGraphBuilder.homeGraph(
     navController: NavController,
     isExpandedWindowSize: Boolean,
     features: List<DisplayFeature>,
-    shouldShowBottomBar: Boolean,
+    onSettingsPressed: () -> Unit,
     onChangeNavigationBarVisibility: (Boolean) -> Unit
 ) {
     navigation(
@@ -136,9 +175,7 @@ fun NavGraphBuilder.homeGraph(
         feedScreen(
             navigateToLogin = { navController.navigateToOnboarding() },
             onSuccess = { onChangeNavigationBarVisibility(true) },
-            onSettingsPressed = {
-                navController.navigateToSettings()
-            }
+            onSettingsPressed = { onSettingsPressed() }
         )
         onboardingScreen(
             onJoinDefaultClicked = {},
@@ -151,10 +188,18 @@ fun NavGraphBuilder.homeGraph(
         codeReceiverScreen(
             tokenSaved = { navController.navigateToFeed() }
         )
-        settingsScreen() {
-            navController.popBackStack()
-        }
     }
+}
+
+sealed class RootDestinations(val route: String) {
+
+    data object Tabs : RootDestinations(
+        route = "tabs"
+    )
+
+    data object Settings : RootDestinations(
+        route = "settings"
+    )
 }
 
 sealed class TabDestination(val label: String, val route: String, val icon: ImageVector) {

@@ -1,13 +1,21 @@
 package me.cniekirk.mastodroid.feature.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +30,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun SettingsRoute(
     viewModel: SettingsViewModel = hiltViewModel(),
+    onClosePressed: () -> Unit
 ) {
     val state = viewModel.collectAsState().value
 
@@ -31,7 +40,8 @@ fun SettingsRoute(
         onDisableAnimatedProfileImagesClicked = { /*TODO*/ },
         disableAnimatedEmoji = false,
         onDisableAnimatedEmojiClicked = { /*TODO*/ },
-        onThemeSelected = viewModel::onThemeSelected
+        onThemeSelected = viewModel::onThemeSelected,
+        onClosePressed = { onClosePressed() }
     )
 }
 
@@ -42,14 +52,28 @@ fun SettingsScreen(
     onDisableAnimatedProfileImagesClicked: () -> Unit,
     disableAnimatedEmoji: Boolean,
     onDisableAnimatedEmojiClicked: () -> Unit,
-    onThemeSelected: (Theme) -> Unit
+    onThemeSelected: (Theme) -> Unit,
+    onClosePressed: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.padding(start = 32.dp, top = 32.dp),
-            text = stringResource(id = R.string.settings_title),
-            style = MaterialTheme.typography.titleLarge
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 32.dp, top = 32.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = { onClosePressed() }) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close"
+                )
+            }
+        }
 
         Text(
             modifier = Modifier.padding(start = 32.dp, top = 32.dp),
@@ -126,7 +150,7 @@ fun SettingsScreenPreview() {
 
     MastodroidTheme {
         Surface {
-            SettingsScreen(state, false, {}, false, {}, {})
+            SettingsScreen(state, false, {}, false, {}, {}, {})
         }
     }
 }
