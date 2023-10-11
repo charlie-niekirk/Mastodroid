@@ -50,6 +50,7 @@ import coil.request.ImageRequest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
+import me.cniekirk.mastodroid.core.model.MediaType
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.feature.feed.ViewState.AUTH_ERROR
 import me.cniekirk.mastodroid.feature.feed.ViewState.LOADING
@@ -226,16 +227,31 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
 
         if (item.mediaInfo.isNotEmpty()) {
             // If there is media, show it
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(item.mediaInfo.first().ratio),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.mediaInfo.first().url)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null
-            )
+            when (item.mediaInfo.first().mediaType) {
+                MediaType.IMAGE -> {
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(item.mediaInfo.first().ratio),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(item.mediaInfo.first().url)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null
+                    )
+                }
+                MediaType.VIDEO -> {
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(item.mediaInfo.first().url)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null
+                    )
+                }
+            }
         }
 
         Row(

@@ -18,13 +18,25 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = "upload"
+            keyPassword = "Checks759!"
+            storeFile = file("/Users/charlie/release")
+            storePassword = "Checks759!"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isDebuggable = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     packaging {
@@ -71,6 +83,9 @@ dependencies {
     implementation(libs.androidx.material3.window.size)
 
     implementation(libs.timber)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.video)
 
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)

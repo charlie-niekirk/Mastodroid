@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(libs.core.ktx)
 
     api(libs.ui)
     api(libs.ui.graphics)

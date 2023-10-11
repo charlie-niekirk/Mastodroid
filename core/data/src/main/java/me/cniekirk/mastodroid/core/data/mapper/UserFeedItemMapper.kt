@@ -19,8 +19,9 @@ import kotlin.math.absoluteValue
 fun NetworkStatus.toUserFeedItem(): UserFeedItem {
 
     val media = this.mediaAttachments?.map { media ->
+        Timber.d("Aspect: ${media.meta?.original?.aspect}, Float: ${media.meta?.original?.aspect?.toFloat()}")
         MediaInfo(
-            MediaType.IMAGE,
+            if (media.type?.equals("video", true) == true) MediaType.VIDEO else MediaType.IMAGE,
             media.meta?.original?.aspect?.toFloat() ?: 0f,
             media.url ?: ""
         )
