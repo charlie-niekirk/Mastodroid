@@ -146,9 +146,7 @@ internal fun FeedScreen(
                         key = items.itemKey { it.id }
                     ) { index ->
                         val feedItem = items[index]
-                        if (feedItem != null) {
-                            MastodonStatus(userFeedItem = feedItem)
-                        }
+                        MastodonStatus(userFeedItem = feedItem)
                     }
                 }
             }
@@ -157,15 +155,15 @@ internal fun FeedScreen(
 }
 
 @Composable
-internal fun MastodonStatus(userFeedItem: UserFeedItem) {
-    val item = if (userFeedItem.rebloggedPost != null) {
+internal fun MastodonStatus(userFeedItem: UserFeedItem?) {
+    val item = if (userFeedItem?.rebloggedPost != null) {
         userFeedItem.rebloggedPost as UserFeedItem
     } else {
         userFeedItem
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        if (userFeedItem.rebloggedPost != null) {
+        if (userFeedItem?.rebloggedPost != null) {
             Row(
                 modifier = Modifier
                     .semantics(mergeDescendants = true) { }
@@ -177,7 +175,7 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp, top = 2.dp),
-                    text = stringResource(id = R.string.reblogged, item.userName),
+                    text = stringResource(id = R.string.reblogged, item?.userName ?: ""),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -189,7 +187,7 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.userProfilePictureUrl)
+                    .data(item?.userProfilePictureUrl)
                     .crossfade(true)
                     .build(),
                 contentDescription = stringResource(id = R.string.profile_image_cd),
@@ -201,12 +199,12 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
 
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 Text(
-                    text = item.userName,
+                    text = item?.userName ?: "",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
-                    text = "@${item.userHandle}",
+                    text = "@${item?.userHandle}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -214,14 +212,14 @@ internal fun MastodonStatus(userFeedItem: UserFeedItem) {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = item.timeSincePost,
+                text = item?.timeSincePost ?: "",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
 
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-            text = item.content as AnnotatedString,
+            text = item?.content as AnnotatedString,
             style = MaterialTheme.typography.bodyLarge
         )
 
