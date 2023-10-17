@@ -5,6 +5,7 @@ import me.cniekirk.mastodroid.core.network.model.NetworkCheckUserAuthResponse
 import me.cniekirk.mastodroid.core.network.model.NetworkRegisterClientResponse
 import me.cniekirk.mastodroid.core.network.model.NetworkServerList
 import me.cniekirk.mastodroid.core.network.model.NetworkStatus
+import me.cniekirk.mastodroid.core.network.model.NetworkStatusContext
 import me.cniekirk.mastodroid.core.network.model.NetworkUserTokenResponse
 
 interface MastodroidNetworkDataSource {
@@ -25,4 +26,14 @@ interface MastodroidNetworkDataSource {
         token: String,
         maxId: Long? = null
     ): Result<List<NetworkStatus>>
+
+    suspend fun getStatus(
+        token: String,
+        id: String
+    ): Result<NetworkStatus>
+
+    suspend fun getStatusContext(
+        id: String,
+        token: String
+    ): Result<NetworkStatusContext>
 }

@@ -47,6 +47,12 @@ interface MastodonService {
         @Query("max_id") maxId: Long? = null
     ): Response<List<NetworkStatus>>
 
+    @GET("api/v1/statuses/{id}")
+    suspend fun getStatus(
+        @Header("Authorization") authorization: String,
+        @Path("id") id: String
+    ): Response<NetworkStatus>
+
     @GET("api/v1/statuses/{id}/context")
     suspend fun getStatusContext(
         @Path("id") id: String,

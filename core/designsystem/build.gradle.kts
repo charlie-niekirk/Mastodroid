@@ -11,6 +11,9 @@ dependencies {
     implementation(project(":core:model"))
     implementation(libs.core.ktx)
 
+    api(libs.immutable)
+    api(libs.material.icons)
+    api(libs.coil.compose)
     api(libs.ui)
     api(libs.ui.graphics)
     api(libs.ui.tooling)

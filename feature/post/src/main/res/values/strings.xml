@@ -2,4 +2,5 @@
 <resources>
     <string name="post_title">Post</string>
     <string name="back_cd">Back</string>
+    <string name="post_load_error">Error loading post!</string>
 </resources>

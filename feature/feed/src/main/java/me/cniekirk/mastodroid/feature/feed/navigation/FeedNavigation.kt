@@ -19,7 +19,8 @@ fun NavController.navigateToFeed() = this.navigate(FEED_NAVIGATION_ROUTE)
 fun NavGraphBuilder.feedScreen(
     navigateToLogin: () -> Unit,
     onSuccess: () -> Unit,
-    onSettingsPressed: () -> Unit
+    onSettingsPressed: () -> Unit,
+    onItemClicked: (postId: String) -> Unit
 ) {
     composable(
         route = FEED_NAVIGATION_ROUTE,
@@ -31,7 +32,8 @@ fun NavGraphBuilder.feedScreen(
         FeedRoute(
             navigateToLogin = { navigateToLogin() },
             onSuccess = { onSuccess() },
-            onSettingsPressed = { onSettingsPressed() }
+            onSettingsPressed = { onSettingsPressed() },
+            onItemClicked = { onItemClicked(it) }
         )
     }
 }

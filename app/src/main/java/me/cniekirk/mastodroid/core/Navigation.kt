@@ -44,6 +44,8 @@ import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListS
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
 import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
+import me.cniekirk.mastodroid.feature.post.navigation.navigateToPost
+import me.cniekirk.mastodroid.feature.post.navigation.postScreen
 import me.cniekirk.mastodroid.feature.settings.navigation.navigateToSettings
 import me.cniekirk.mastodroid.feature.settings.navigation.settingsScreen
 
@@ -175,7 +177,8 @@ fun NavGraphBuilder.homeGraph(
         feedScreen(
             navigateToLogin = { navController.navigateToOnboarding() },
             onSuccess = { onChangeNavigationBarVisibility(true) },
-            onSettingsPressed = { onSettingsPressed() }
+            onSettingsPressed = { onSettingsPressed() },
+            onItemClicked = { navController.navigateToPost(it) }
         )
         onboardingScreen(
             onJoinDefaultClicked = {},
@@ -187,6 +190,9 @@ fun NavGraphBuilder.homeGraph(
         )
         codeReceiverScreen(
             tokenSaved = { navController.navigateToFeed() }
+        )
+        postScreen(
+            onBackPressed = { navController.popBackStack() }
         )
     }
 }

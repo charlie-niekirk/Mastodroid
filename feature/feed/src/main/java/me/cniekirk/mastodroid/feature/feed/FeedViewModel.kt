@@ -1,6 +1,5 @@
 package me.cniekirk.mastodroid.feature.feed
 
-import android.text.Spannable
 import android.text.Spanned
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -18,6 +17,7 @@ import me.cniekirk.mastodroid.core.data.repository.HomeFeedPagingSource
 import me.cniekirk.mastodroid.core.model.AuthStatus.LOGGED_IN
 import me.cniekirk.mastodroid.core.model.AuthStatus.NO_TOKEN
 import me.cniekirk.mastodroid.core.model.AuthStatus.TOKEN_EXPIRED
+import me.cniekirk.mastodroid.core.ui.toAnnotatedString
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce

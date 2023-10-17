@@ -1,11 +1,8 @@
 package me.cniekirk.mastodroid.core.data.mapper
 
 import android.text.Html
-import android.text.Spannable
 import android.text.Spanned
-import android.text.style.ParagraphStyle
 import androidx.core.text.HtmlCompat
-import androidx.core.text.getSpans
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import me.cniekirk.mastodroid.core.model.MediaInfo
@@ -28,7 +25,6 @@ fun NetworkStatus.toUserFeedItem(): UserFeedItem {
     }
 
     val html = Html.fromHtml(this.content, HtmlCompat.FROM_HTML_MODE_LEGACY).removeTrailingWhitespace()
-
 
     return UserFeedItem(
         id = this.id?.toLong() ?: 0L,

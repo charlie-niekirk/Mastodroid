@@ -50,6 +50,7 @@ import coil.request.ImageRequest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
+import me.cniekirk.mastodroid.core.designsystem.component.MastodonStatus
 import me.cniekirk.mastodroid.core.model.MediaType
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.feature.feed.ViewState.AUTH_ERROR
@@ -62,7 +63,8 @@ internal fun FeedRoute(
     viewModel: FeedViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
     onSuccess: () -> Unit,
-    onSettingsPressed: () -> Unit
+    onSettingsPressed: () -> Unit,
+    onItemClicked: (postId: String) -> Unit
 ) {
     val state = viewModel.collectAsState().value
 
@@ -73,9 +75,11 @@ internal fun FeedRoute(
                 onSuccess()
             }
 
-            FeedScreen(state) {
-                onSettingsPressed()
-            }
+            FeedScreen(
+                state = state,
+                onSettingsPressed = { onSettingsPressed() },
+                onItemClicked = { onItemClicked(it) }
+            )
         }
         AUTH_ERROR -> {
             LaunchedEffect(state) {
@@ -101,7 +105,8 @@ internal fun LoadingView() {
 @Composable
 internal fun FeedScreen(
     state: FeedState,
-    onSettingsPressed: () -> Unit
+    onSettingsPressed: () -> Unit,
+    onItemClicked: (postId: String) -> Unit
 ) {
     val items = state.feedItems.collectAsLazyPagingItems()
 
@@ -146,177 +151,13 @@ internal fun FeedScreen(
                         key = items.itemKey { it.id }
                     ) { index ->
                         val feedItem = items[index]
-                        MastodonStatus(userFeedItem = feedItem)
+                        MastodonStatus(userFeedItem = feedItem) {
+                            onItemClicked(it)
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-internal fun MastodonStatus(userFeedItem: UserFeedItem?) {
-    val item = if (userFeedItem?.rebloggedPost != null) {
-        userFeedItem.rebloggedPost as UserFeedItem
-    } else {
-        userFeedItem
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        if (userFeedItem?.rebloggedPost != null) {
-            Row(
-                modifier = Modifier
-                    .semantics(mergeDescendants = true) { }
-                    .padding(start = 16.dp, top = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Repeat,
-                    contentDescription = null
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp, top = 2.dp),
-                    text = stringResource(id = R.string.reblogged, item?.userName ?: ""),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(item?.userProfilePictureUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = stringResource(id = R.string.profile_image_cd),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-            )
-
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                Text(
-                    text = item?.userName ?: "",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    modifier = Modifier.padding(top = 2.dp),
-                    text = "@${item?.userHandle}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = item?.timeSincePost ?: "",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-            text = item?.content as AnnotatedString,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        if (item.mediaInfo.isNotEmpty()) {
-            // If there is media, show it
-            when (item.mediaInfo.first().mediaType) {
-                MediaType.IMAGE -> {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(item.mediaInfo.first().ratio),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(item.mediaInfo.first().url)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null
-                    )
-                }
-                MediaType.VIDEO -> {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(item.mediaInfo.first().url)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null
-                    )
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {},
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .zIndex(1f)
-                        .clickable { },
-                    imageVector = Icons.Default.ChatBubble,
-                    contentDescription = stringResource(id = R.string.replies_cd)
-                )
-                Text(
-                    modifier = Modifier.padding(bottom = 3.dp, start = 8.dp),
-                    text = item.numComments.toString()
-                )
-            }
-            Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {},
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .zIndex(1f)
-                        .clickable { },
-                    imageVector = Icons.Default.Repeat,
-                    contentDescription = stringResource(id = R.string.reblog_cd)
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = item.numReblogs.toString()
-                )
-            }
-            Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {},
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .zIndex(1f)
-                        .clickable { },
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = stringResource(id = R.string.favourites_cd)
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = item.numFavourites.toString()
-                )
-            }
-            Icon(
-                modifier = Modifier.clickable {  },
-                imageVector = Icons.Default.Share,
-                contentDescription = stringResource(id = R.string.share_cd)
-            )
-        }
-
-        HorizontalDivider()
     }
 }
 
@@ -339,7 +180,7 @@ private fun FeedScreenPreview() {
     val state = FeedState(viewState = SUCCESS, feedItems = MutableStateFlow(PagingData.from(listOf(feedItem, feedItem.copy(id = 2), feedItem.copy(id = 3)))))
     MastodroidTheme {
         Surface {
-            FeedScreen(state) {}
+            FeedScreen(state, {}) {}
         }
     }
 }

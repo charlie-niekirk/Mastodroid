@@ -1,10 +1,9 @@
-package me.cniekirk.mastodroid.feature.feed
+package me.cniekirk.mastodroid.core.ui
 
 import android.graphics.Typeface
 import android.text.Spanned
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
-import android.text.style.ParagraphStyle
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
 import android.text.style.UnderlineSpan

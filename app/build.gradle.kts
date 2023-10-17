@@ -63,6 +63,7 @@ dependencies {
     implementation(project(":feature:instanceselection"))
     implementation(project(":feature:codereceiver"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:post"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)

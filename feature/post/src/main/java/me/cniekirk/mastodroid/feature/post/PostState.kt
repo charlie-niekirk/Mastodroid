@@ -6,8 +6,9 @@ import kotlinx.collections.immutable.persistentListOf
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 
 data class PostState(
+    val isLoading: Boolean = true,
     val post: UserFeedItem? = null,
-    val comments: ImmutableList<String> = persistentListOf()
+    val comments: ImmutableList<UserFeedItem> = persistentListOf()
 )
 
 sealed class PostEffect {
