@@ -30,7 +30,7 @@ class PostViewModel @Inject constructor(
     }
 
     private fun loadPostData(postId: String) = intent {
-        when (val statusAndContext = statusRepository.getStatusAndContext(postId)) {
+        when (val statusAndContext = statusRepository.getStatus(postId)) {
             is Result.Failure -> {
                 // Post error
                 reduce { state.copy(isLoading = false) }
@@ -39,17 +39,35 @@ class PostViewModel @Inject constructor(
             is Result.Success -> {
                 // Reduce state
                 reduce {
-                    val post = statusAndContext.data.status
+                    val post = statusAndContext.data
                     state.copy(
                         isLoading = false,
                         post = post.copy(
                             content = (post.content as Spanned).toAnnotatedString(Color.Blue)
-                        ),
-                        comments = statusAndContext.data.context.map {
-                            it.copy(
-                                content = (it.content as Spanned).toAnnotatedString(Color.Blue)
-                            )
-                        }.toImmutableList()
+                        )
+                    )
+                }
+
+                // Then get the comments
+                getStatusContext(postId)
+            }
+        }
+    }
+
+    private fun getStatusContext(postId: String) = intent {
+        when (val statusAndContext = statusRepository.getStatusContext(postId)) {
+            is Result.Failure -> {
+                // Post error
+                reduce { state.copy(isLoading = false) }
+                postSideEffect(PostEffect.Error(R.string.post_load_error))
+            }
+            is Result.Success -> {
+                // Reduce state
+                reduce {
+                    val comments = statusAndContext.data
+                    state.copy(
+                        areCommentsLoading = false,
+                        comments = comments.map { it.copy(content = (it.content as Spanned).toAnnotatedString(Color.Blue)) }.toImmutableList()
                     )
                 }
             }

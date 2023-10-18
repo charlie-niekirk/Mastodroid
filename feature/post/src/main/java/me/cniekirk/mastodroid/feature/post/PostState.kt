@@ -7,6 +7,7 @@ import me.cniekirk.mastodroid.core.model.UserFeedItem
 
 data class PostState(
     val isLoading: Boolean = true,
+    val areCommentsLoading: Boolean = true,
     val post: UserFeedItem? = null,
     val comments: ImmutableList<UserFeedItem> = persistentListOf()
 )

@@ -1,9 +1,16 @@
 package me.cniekirk.mastodroid.feature.post
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -20,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
@@ -84,10 +92,38 @@ fun PostScreen(
             CircularProgressIndicator()
             Spacer(modifier = Modifier.weight(1f))
         } else {
-            MastodonStatus(
-                userFeedItem = state.post,
-                onItemClick = {}
-            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                item {
+                    MastodonStatus(
+                        userFeedItem = state.post,
+                        onItemClick = {}
+                    )
+                }
+
+                if (state.areCommentsLoading) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                } else {
+                    items(state.comments) { item ->
+                        MastodonStatus(
+                            userFeedItem = item,
+                            onItemClick = {}
+                        )
+                    }
+                }
+            }
         }
     }
 }
