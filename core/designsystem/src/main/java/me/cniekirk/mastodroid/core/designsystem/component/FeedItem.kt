@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.collections.immutable.persistentListOf
+import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
 import me.cniekirk.mastodroid.core.designsystem.R
+import me.cniekirk.mastodroid.core.designsystem.preview.LoremIpsum30Words
 import me.cniekirk.mastodroid.core.model.MediaType
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 
@@ -207,5 +213,27 @@ fun MastodonStatus(
         }
 
         HorizontalDivider()
+    }
+}
+
+@Preview
+@Composable
+fun MastodonStatusPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) {
+    val feedItem = UserFeedItem(
+        1,
+        "Example User",
+        "example",
+        "",
+        "1hr",
+        AnnotatedString("$text."),
+        11,
+        12,
+        13,
+        persistentListOf()
+    )
+    MastodroidTheme {
+        Surface {
+            MastodonStatus(userFeedItem = feedItem) {}
+        }
     }
 }

@@ -26,12 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
 import me.cniekirk.mastodroid.core.designsystem.component.MastodonStatus
+import me.cniekirk.mastodroid.core.designsystem.preview.LoremIpsum30Words
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -130,8 +133,23 @@ fun PostScreen(
 
 @Preview
 @Composable
-fun PostScreenPreview() {
-    val state = PostState(post = UserFeedItem(1, "Example User", "exampleuser", "", "1hr", "This is some good content right here", 11, 12, 13, persistentListOf()))
+fun PostScreenPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) {
+    val state = PostState(
+        isLoading = false,
+        post = UserFeedItem(
+            1,
+            "Example User",
+            "exampleuser",
+            "",
+            "1hr",
+            AnnotatedString("$text."),
+            11,
+            12,
+            13,
+            persistentListOf()
+        ),
+        areCommentsLoading = false
+    )
     MastodroidTheme {
         Surface {
             PostScreen(state = state, onBackPressed = {})

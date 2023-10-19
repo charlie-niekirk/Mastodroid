@@ -48,6 +48,9 @@ android {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
+    ksp {
+        arg("room.generateKotlin", "true")
+    }
 }
 
 dependencies {

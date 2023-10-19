@@ -2,7 +2,7 @@
 androidDesugarJdkLibs = "2.0.3"
 androidGradlePlugin = "8.1.2"
 androidxComposeCompiler = "1.5.1"
-agp = "8.2.0-beta06"
+agp = "8.2.0-rc01"
 kotlin = "1.9.0"
 core-ktx = "1.12.0"
 junit = "5.9.1"
@@ -41,6 +41,7 @@ material = "1.10.0"
 org-jetbrains-kotlin-jvm = "1.9.0"
 coil = "2.4.0"
 icons = "1.5.3"
+ui = "1.6.0-alpha08"
 
 
 [libraries]
@@ -52,12 +53,12 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-ui = { group = "androidx.compose.ui", name = "ui" }
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "ui" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "ui" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "ui" }
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
