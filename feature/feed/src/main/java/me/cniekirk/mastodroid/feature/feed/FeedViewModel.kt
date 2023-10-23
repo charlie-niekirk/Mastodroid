@@ -65,7 +65,7 @@ internal class FeedViewModel @Inject constructor(
                 }.flow
                     .map { pagingData ->
                         pagingData.map { networkStatus ->
-                            val item = networkStatus.toUserFeedItem()
+                            val item = networkStatus.toUserFeedItem("")
                             val reblogged = item.rebloggedPost
                             item.copy(
                                 content = (item.content as Spanned).toAnnotatedString(Color.Blue),

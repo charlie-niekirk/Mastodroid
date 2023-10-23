@@ -24,7 +24,7 @@ class UserStatusRepository @Inject constructor(
         return if (serverConfiguration != null) {
             when (val status = mastodroidNetworkDataSource.getStatus(serverConfiguration.userAuthToken, id)) {
                 is Result.Failure -> status
-                is Result.Success -> Result.Success(status.data.toUserFeedItem())
+                is Result.Success -> Result.Success(status.data.toUserFeedItem(""))
             }
         } else {
             Result.Failure(UnexpectedError())
@@ -39,7 +39,16 @@ class UserStatusRepository @Inject constructor(
                 is Result.Failure -> statusContextResponse
                 is Result.Success -> {
                     // Map data
-                    Result.Success(statusContextResponse.data.descendants.map { it.toUserFeedItem() }.toImmutableList())
+                    val comments = statusContextResponse.data.descendants
+                    Result.Success(
+                        comments.map { comment ->
+                            val replyUser = comments.firstOrNull { it.id?.equals(comment.inReplyToId) == true }
+                            val replyText = if (replyUser != null) {
+                                replyUser.account?.username ?: ""
+                            } else ""
+                            comment.toUserFeedItem(replyText)
+                        }.toImmutableList()
+                    )
                 }
             }
         } else {

@@ -170,10 +170,12 @@ private fun FeedScreenPreview() {
         "example",
         "",
         "1hr",
+        "10 October 2023 10:34",
         AnnotatedString("This is an example post and here's more text so that it spans more than one line."),
         11,
         12,
         13,
+        "Mastodroid for Android",
         persistentListOf()
     )
 

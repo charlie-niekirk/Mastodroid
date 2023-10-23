@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -59,6 +61,24 @@ fun MastodonStatus(
             .fillMaxWidth()
             .clickable { onItemClick(userFeedItem?.id.toString()) }
     ) {
+        if (!userFeedItem?.replyToUser.isNullOrEmpty()) {
+            Row(
+                modifier = Modifier
+                    .semantics(mergeDescendants = true) { }
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Reply,
+                    contentDescription = null
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = R.string.reply_to, item?.replyToUser ?: ""),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
         if (userFeedItem?.rebloggedPost != null) {
             Row(
                 modifier = Modifier
@@ -225,11 +245,14 @@ fun MastodonStatusPreview(@PreviewParameter(LoremIpsum30Words::class) text: Stri
         "example",
         "",
         "1hr",
+        "10 October 2023 10:34",
         AnnotatedString("$text."),
         11,
         12,
         13,
-        persistentListOf()
+        "Mastodroid for Android",
+        persistentListOf(),
+        "someuser"
     )
     MastodroidTheme {
         Surface {

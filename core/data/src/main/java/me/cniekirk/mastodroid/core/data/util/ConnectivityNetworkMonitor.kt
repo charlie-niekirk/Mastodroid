@@ -28,10 +28,6 @@ class ConnectivityNetworkMonitor @Inject constructor(
          * The callback's methods are invoked on changes to *any* network matching the [NetworkRequest],
          * not just the active network. So we can simply track the presence (or absence) of such [Network].
          */
-        /**
-         * The callback's methods are invoked on changes to *any* network matching the [NetworkRequest],
-         * not just the active network. So we can simply track the presence (or absence) of such [Network].
-         */
         val callback = object : ConnectivityManager.NetworkCallback() {
 
             private val networks = mutableSetOf<Network>()
@@ -55,17 +51,12 @@ class ConnectivityNetworkMonitor @Inject constructor(
         /**
          * Sends the latest connectivity status to the underlying channel.
          */
-
-        /**
-         * Sends the latest connectivity status to the underlying channel.
-         */
         channel.trySend(connectivityManager.isCurrentlyConnected())
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(callback)
         }
-    }
-        .conflate()
+    }.conflate()
 
     private fun ConnectivityManager.isCurrentlyConnected() =
         activeNetwork

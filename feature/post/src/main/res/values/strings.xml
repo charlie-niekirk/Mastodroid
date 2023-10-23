@@ -3,4 +3,7 @@
     <string name="post_title">Post</string>
     <string name="back_cd">Back</string>
     <string name="post_load_error">Error loading post!</string>
+    <string name="reposts_format">%1$d reposts</string>
+    <string name="favourites_format">%1$d favourites</string>
+    <string name="client_time_format">%1$s via %2$s</string>
 </resources>

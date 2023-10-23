@@ -9,4 +9,5 @@
     <string name="favourites_cd">Favourites</string>
     <string name="share_cd">Share</string>
     <string name="reblogged">%1$s reblogged</string>
+    <string name="reply_to">In reply to %1$s</string>
 </resources>

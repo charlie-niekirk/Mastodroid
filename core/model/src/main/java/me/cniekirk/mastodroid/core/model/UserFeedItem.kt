@@ -19,10 +19,13 @@ data class UserFeedItem(
     val userHandle: String,
     val userProfilePictureUrl: String,
     val timeSincePost: String,
+    val timeString: String,
     val content: CharSequence,
     val numComments: Int,
     val numReblogs: Int,
     val numFavourites: Int,
+    val client: String,
     val mediaInfo: ImmutableList<MediaInfo>,
+    val replyToUser: String = "",
     val rebloggedPost: UserFeedItem? = null
 )

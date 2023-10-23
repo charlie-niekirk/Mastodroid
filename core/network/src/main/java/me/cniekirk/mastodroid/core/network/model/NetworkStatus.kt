@@ -27,9 +27,9 @@ data class NetworkStatus(
     @Json(name = "id")
     val id: String?,
     @Json(name = "in_reply_to_account_id")
-    val inReplyToAccountId: Any?,
+    val inReplyToAccountId: String?,
     @Json(name = "in_reply_to_id")
-    val inReplyToId: Any?,
+    val inReplyToId: String?,
     @Json(name = "language")
     val language: String?,
     @Json(name = "media_attachments")

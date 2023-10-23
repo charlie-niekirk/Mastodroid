@@ -11,9 +11,13 @@ import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.core.network.model.NetworkStatus
 import timber.log.Timber
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import kotlin.math.absoluteValue
 
-fun NetworkStatus.toUserFeedItem(): UserFeedItem {
+private const val TIME_FORMAT = "dd MMMM yyyy HH:mm"
+
+fun NetworkStatus.toUserFeedItem(replyToUser: String): UserFeedItem {
 
     val media = this.mediaAttachments?.map { media ->
         Timber.d("Aspect: ${media.meta?.original?.aspect}, Float: ${media.meta?.original?.aspect?.toFloat()}")
@@ -25,19 +29,25 @@ fun NetworkStatus.toUserFeedItem(): UserFeedItem {
     }
 
     val html = Html.fromHtml(this.content, HtmlCompat.FROM_HTML_MODE_LEGACY).removeTrailingWhitespace()
+    val instant = Instant.parse(this.createdAt)
+    val formatter = DateTimeFormatter.ofPattern(TIME_FORMAT)
+        .withZone(ZoneId.systemDefault())
 
     return UserFeedItem(
         id = this.id?.toLong() ?: 0L,
         userName = this.account?.displayName ?: "",
         userHandle = this.account?.username ?: "",
         userProfilePictureUrl = this.account?.avatar ?: "",
-        timeSincePost = Instant.parse(this.createdAt).toEpochMilli().getElapsedTime(),
+        timeSincePost = instant.toEpochMilli().getElapsedTime(),
+        timeString = formatter.format(instant),
         content = html,
         numComments = this.repliesCount ?: 0,
         numReblogs = this.reblogsCount ?: 0,
         numFavourites = this.favouritesCount ?: 0,
+        client = this.application?.name ?: "",
         mediaInfo = media?.toImmutableList() ?: persistentListOf(),
-        rebloggedPost = if (this.reblog != null) this.reblog?.toUserFeedItem() else null
+        replyToUser = replyToUser,
+        rebloggedPost = if (this.reblog != null) this.reblog?.toUserFeedItem("") else null
     )
 }
 
