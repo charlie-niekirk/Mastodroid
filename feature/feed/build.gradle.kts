@@ -5,6 +5,10 @@ plugins {
 
 android {
     namespace = "me.cniekirk.mastodroid.feature.feed"
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 dependencies {
@@ -13,4 +17,9 @@ dependencies {
     implementation(libs.bundles.paging)
     implementation(libs.coil.compose)
     implementation(libs.material.icons)
+
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+
+    androidTestImplementation(libs.ui.test.junit4)
 }

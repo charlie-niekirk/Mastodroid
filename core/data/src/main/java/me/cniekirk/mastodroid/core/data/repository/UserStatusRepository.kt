@@ -7,6 +7,7 @@ import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.common.util.UnexpectedError
 import me.cniekirk.mastodroid.core.data.mapper.toUserFeedItem
 import me.cniekirk.mastodroid.core.database.dao.ServerConfigurationDao
+import me.cniekirk.mastodroid.core.database.model.ServerConfigurationEntity
 import me.cniekirk.mastodroid.core.datastore.MastodroidPreferencesDataSource
 import me.cniekirk.mastodroid.core.model.UserFeedItem
 import me.cniekirk.mastodroid.core.network.MastodroidNetworkDataSource
@@ -18,23 +19,16 @@ class UserStatusRepository @Inject constructor(
     private val mastodroidNetworkDataSource: MastodroidNetworkDataSource
 ) : StatusRepository {
 
-    override suspend fun getStatus(id: String): Result<UserFeedItem> {
-        val selectedServerUid = mastodroidPreferencesDataSource.userData.first().selectedServerUid
-        val serverConfiguration = serverConfigurationDao.findByUid(selectedServerUid).firstOrNull()
-        return if (serverConfiguration != null) {
+    override suspend fun getStatus(id: String): Result<UserFeedItem> =
+        executeRequest { serverConfiguration ->
             when (val status = mastodroidNetworkDataSource.getStatus(serverConfiguration.userAuthToken, id)) {
                 is Result.Failure -> status
                 is Result.Success -> Result.Success(status.data.toUserFeedItem(""))
             }
-        } else {
-            Result.Failure(UnexpectedError())
         }
-    }
 
-    override suspend fun getStatusContext(id: String): Result<ImmutableList<UserFeedItem>> {
-        val selectedServerUid = mastodroidPreferencesDataSource.userData.first().selectedServerUid
-        val serverConfiguration = serverConfigurationDao.findByUid(selectedServerUid).firstOrNull()
-        return if (serverConfiguration != null) {
+    override suspend fun getStatusContext(id: String): Result<ImmutableList<UserFeedItem>> =
+        executeRequest { serverConfiguration ->
             when (val statusContextResponse = mastodroidNetworkDataSource.getStatusContext(id, serverConfiguration.userAuthToken)) {
                 is Result.Failure -> statusContextResponse
                 is Result.Success -> {
@@ -51,6 +45,37 @@ class UserStatusRepository @Inject constructor(
                     )
                 }
             }
+        }
+
+    override suspend fun favouriteStatus(id: String): Result<UserFeedItem> =
+        executeRequest { serverConfiguration ->
+            when (val favouriteResponse = mastodroidNetworkDataSource.favouriteStatus(id, serverConfiguration.userAuthToken)) {
+                is Result.Failure -> favouriteResponse
+                is Result.Success -> Result.Success(favouriteResponse.data.toUserFeedItem(""))
+            }
+        }
+
+    override suspend fun undoFavouriteStatus(id: String): Result<UserFeedItem> =
+        executeRequest { serverConfiguration ->
+            when (val favouriteResponse = mastodroidNetworkDataSource.unfavouriteStatus(id, serverConfiguration.userAuthToken)) {
+                is Result.Failure -> favouriteResponse
+                is Result.Success -> Result.Success(favouriteResponse.data.toUserFeedItem(""))
+            }
+        }
+
+    override suspend fun reblogStatus(id: String): Result<UserFeedItem> =
+        executeRequest { serverConfiguration ->
+            when (val reblogResponse = mastodroidNetworkDataSource.reblogStatus(id, serverConfiguration.userAuthToken)) {
+                is Result.Failure -> reblogResponse
+                is Result.Success -> Result.Success(reblogResponse.data.toUserFeedItem(""))
+            }
+        }
+
+    private suspend fun <T> executeRequest(body: suspend (ServerConfigurationEntity) -> Result<T>): Result<T> {
+        val selectedServerUid = mastodroidPreferencesDataSource.userData.first().selectedServerUid
+        val serverConfiguration = serverConfigurationDao.findByUid(selectedServerUid).firstOrNull()
+        return if (serverConfiguration != null) {
+            body(serverConfiguration)
         } else {
             Result.Failure(UnexpectedError())
         }

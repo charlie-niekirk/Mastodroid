@@ -12,7 +12,6 @@ import me.cniekirk.mastodroid.core.designsystem.popExitAnimation
 import me.cniekirk.mastodroid.feature.feed.FeedRoute
 
 const val FEED_NAVIGATION_ROUTE = "feed_route"
-const val SETTINGS_ROUTE = "settings_route"
 
 fun NavController.navigateToFeed() = this.navigate(FEED_NAVIGATION_ROUTE)
 

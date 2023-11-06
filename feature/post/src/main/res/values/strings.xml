@@ -6,4 +6,7 @@
     <string name="reposts_format">%1$d reposts</string>
     <string name="favourites_format">%1$d favourites</string>
     <string name="client_time_format">%1$s via %2$s</string>
+    <string name="post_action_error">Operation failed!</string>
+    <string name="share_link_text">Share link</string>
+    <string name="share_media_text">Share media</string>
 </resources>

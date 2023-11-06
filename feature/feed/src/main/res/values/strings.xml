@@ -2,4 +2,5 @@
 <resources>
     <string name="feed_title">Mastodroid</string>
     <string name="settings_cd">Settings</string>
+    <string name="auth_status_error">Error checking auth status!</string>
 </resources>

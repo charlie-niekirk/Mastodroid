@@ -36,4 +36,19 @@ interface MastodroidNetworkDataSource {
         id: String,
         token: String
     ): Result<NetworkStatusContext>
+
+    suspend fun favouriteStatus(
+        id: String,
+        token: String
+    ): Result<NetworkStatus>
+
+    suspend fun unfavouriteStatus(
+        id: String,
+        token: String
+    ): Result<NetworkStatus>
+
+    suspend fun reblogStatus(
+        id: String,
+        token: String
+    ): Result<NetworkStatus>
 }

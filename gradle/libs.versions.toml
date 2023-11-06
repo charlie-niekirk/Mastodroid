@@ -42,6 +42,7 @@ org-jetbrains-kotlin-jvm = "1.9.0"
 coil = "2.4.0"
 icons = "1.5.3"
 ui = "1.6.0-alpha08"
+mockk = "1.13.8"
 
 
 [libraries]
@@ -106,6 +107,8 @@ junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "icons" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 # Dependencies for build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

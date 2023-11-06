@@ -58,4 +58,24 @@ interface MastodonService {
         @Path("id") id: String,
         @Header("Authorization") authorization: String,
     ): Response<NetworkStatusContext>
+
+    @POST("api/v1/statuses/{id}/favourite")
+    suspend fun favouriteStatus(
+        @Path("id") id: String,
+        @Header("Authorization") authorization: String,
+    ): Response<NetworkStatus>
+
+    @POST("api/v1/statuses/{id}/unfavourite")
+    suspend fun undoFavouriteStatus(
+        @Path("id") id: String,
+        @Header("Authorization") authorization: String,
+    ): Response<NetworkStatus>
+
+    @POST("api/v1/statuses/{id}/reblog")
+    @FormUrlEncoded
+    suspend fun reblogStatus(
+        @Path("id") id: String,
+        @Header("Authorization") authorization: String,
+        @Field("visibility") visibility: String = "public"
+    ): Response<NetworkStatus>
 }

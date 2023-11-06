@@ -3,6 +3,7 @@ package me.cniekirk.mastodroid.feature.post
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -19,7 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,14 +31,18 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,12 +70,22 @@ fun PostRoute(
             is PostEffect.Error -> {
                 Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
             }
+            is PostEffect.ReplyToPost -> {
+
+            }
         }
     }
 
     PostScreen(
         state = state,
-        onBackPressed = { onBackPressed() }
+        onBackPressed = { onBackPressed() },
+        onReplyClicked = viewModel::replyPost,
+        onReblogClicked = viewModel::reblogPost,
+        onFavouriteClicked = viewModel::favouritePost,
+        onShareClicked = viewModel::sharePost,
+        onShareLinkClicked = {},
+        onShareMediaClicked = {},
+        onDismissShare = viewModel::onDismissShare
     )
 }
 
@@ -76,8 +93,65 @@ fun PostRoute(
 @Composable
 fun PostScreen(
     state: PostState,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onReplyClicked: (postId: String) -> Unit,
+    onReblogClicked: (postId: String) -> Unit,
+    onFavouriteClicked: (postId: String) -> Unit,
+    onShareClicked: (postId: String) -> Unit,
+    onShareLinkClicked: () -> Unit,
+    onShareMediaClicked: () -> Unit,
+    onDismissShare: () -> Unit
 ) {
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    if (state.bottomShareSheet.isVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { onDismissShare() },
+            sheetState = sheetState
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable { onShareLinkClicked() },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = null
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 4.dp),
+                        text = stringResource(id = R.string.share_link_text)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable { onShareMediaClicked() },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = null
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 4.dp),
+                        text = stringResource(id = R.string.share_media_text)
+                    )
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -103,19 +177,27 @@ fun PostScreen(
 
         if (state.isLoading) {
             Spacer(modifier = Modifier.weight(1f))
-            CircularProgressIndicator()
+            CircularProgressIndicator(modifier = Modifier.testTag("post_loader"))
             Spacer(modifier = Modifier.weight(1f))
         } else {
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
+                modifier = Modifier.testTag("post_page_content"),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                item {
-                    MastodonStatus(
-                        userFeedItem = state.post,
-                        onItemClick = {}
-                    )
+                if (state.post != null) {
+                    item {
+                        MastodonStatus(
+                            userFeedItem = state.post,
+                            onItemClicked = {},
+                            onReplyClicked = {},
+                            onReblogClicked = {},
+                            onShareClicked = {},
+                            onFavouriteClicked = {},
+                            isPost = true
+                        )
+                    }
                 }
 
                 item {
@@ -144,7 +226,11 @@ fun PostScreen(
                     items(state.comments) { item ->
                         MastodonStatus(
                             userFeedItem = item,
-                            onItemClick = {}
+                            onItemClicked = {},
+                            onReplyClicked = {},
+                            onReblogClicked = {},
+                            onShareClicked = {},
+                            onFavouriteClicked = {}
                         )
                     }
                 }
@@ -234,18 +320,20 @@ fun PostScreenPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) 
             "",
             "1hr",
             "10 October 2023 10:34",
-            AnnotatedString("$text."),
+            text,
             11,
             12,
             13,
             "Mastodroid for Android",
+            false,
+            false,
             persistentListOf()
         ),
         areCommentsLoading = false
     )
     MastodroidTheme {
         Surface {
-            PostScreen(state = state, onBackPressed = {})
+            PostScreen(state = state, onBackPressed = {}, {}, {}, {}, {}, {}, {}, {})
         }
     }
 }

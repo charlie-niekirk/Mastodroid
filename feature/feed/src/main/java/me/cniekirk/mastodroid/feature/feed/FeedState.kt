@@ -1,5 +1,6 @@
 package me.cniekirk.mastodroid.feature.feed
 
+import androidx.annotation.StringRes
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -18,5 +19,5 @@ data class FeedState(
 
 sealed class FeedEffect {
 
-
+    data class Error(@StringRes val message: Int) : FeedEffect()
 }

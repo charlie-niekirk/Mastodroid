@@ -1,5 +1,7 @@
 package me.cniekirk.mastodroid.feature.feed
 
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import me.cniekirk.mastodroid.feature.feed.ViewState.AUTH_ERROR
 import me.cniekirk.mastodroid.feature.feed.ViewState.LOADING
 import me.cniekirk.mastodroid.feature.feed.ViewState.SUCCESS
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 internal fun FeedRoute(
@@ -66,7 +69,17 @@ internal fun FeedRoute(
     onSettingsPressed: () -> Unit,
     onItemClicked: (postId: String) -> Unit
 ) {
+    val context = LocalContext.current
+
     val state = viewModel.collectAsState().value
+    viewModel.collectSideEffect(
+        sideEffect = { effect ->
+            handleSideEffect(
+                effect,
+                toast = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+            )
+        }
+    )
 
     when (state.viewState) {
         LOADING -> LoadingView()
@@ -77,8 +90,12 @@ internal fun FeedRoute(
 
             FeedScreen(
                 state = state,
-                onSettingsPressed = { onSettingsPressed() },
-                onItemClicked = { onItemClicked(it) }
+                onSettingsClicked = { onSettingsPressed() },
+                onItemClicked = { onItemClicked(it) },
+                onReplyClicked = {},
+                onReblogClicked = {},
+                onFavouriteClicked = {},
+                onShareClicked = {}
             )
         }
         AUTH_ERROR -> {
@@ -86,6 +103,15 @@ internal fun FeedRoute(
                 navigateToLogin()
             }
         }
+    }
+}
+
+private fun handleSideEffect(
+    feedEffect: FeedEffect,
+    toast: (Int) -> Unit
+) {
+    when (feedEffect) {
+        is FeedEffect.Error -> toast(feedEffect.message)
     }
 }
 
@@ -105,8 +131,12 @@ internal fun LoadingView() {
 @Composable
 internal fun FeedScreen(
     state: FeedState,
-    onSettingsPressed: () -> Unit,
-    onItemClicked: (postId: String) -> Unit
+    onSettingsClicked: () -> Unit,
+    onItemClicked: (postId: String) -> Unit,
+    onReplyClicked: (postId: String) -> Unit,
+    onReblogClicked: (postId: String) -> Unit,
+    onFavouriteClicked: (postId: String) -> Unit,
+    onShareClicked: (postId: String) -> Unit
 ) {
     val items = state.feedItems.collectAsLazyPagingItems()
 
@@ -125,7 +155,7 @@ internal fun FeedScreen(
                 Icon(
                     modifier = Modifier
                         .padding(end = 16.dp)
-                        .clickable { onSettingsPressed() },
+                        .clickable { onSettingsClicked() },
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings"
                 )
@@ -151,8 +181,16 @@ internal fun FeedScreen(
                         key = items.itemKey { it.id }
                     ) { index ->
                         val feedItem = items[index]
-                        MastodonStatus(userFeedItem = feedItem) {
-                            onItemClicked(it)
+
+                        if (feedItem != null) {
+                            MastodonStatus(
+                                userFeedItem = feedItem,
+                                onItemClicked = { onItemClicked(it) },
+                                onReplyClicked = { onReplyClicked(it) },
+                                onReblogClicked = { onReblogClicked(it) },
+                                onFavouriteClicked = { onFavouriteClicked(it) },
+                                onShareClicked = { onShareClicked(it) }
+                            )
                         }
                     }
                 }
@@ -171,18 +209,20 @@ private fun FeedScreenPreview() {
         "",
         "1hr",
         "10 October 2023 10:34",
-        AnnotatedString("This is an example post and here's more text so that it spans more than one line."),
+        "This is an example post and here's more text so that it spans more than one line.",
         11,
         12,
         13,
         "Mastodroid for Android",
+        false,
+        false,
         persistentListOf()
     )
 
     val state = FeedState(viewState = SUCCESS, feedItems = MutableStateFlow(PagingData.from(listOf(feedItem, feedItem.copy(id = 2), feedItem.copy(id = 3)))))
     MastodroidTheme {
         Surface {
-            FeedScreen(state, {}) {}
+            FeedScreen(state, {}, {}, {}, {}, {}, {})
         }
     }
 }

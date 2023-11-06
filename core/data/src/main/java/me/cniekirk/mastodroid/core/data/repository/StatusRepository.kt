@@ -9,4 +9,10 @@ interface StatusRepository {
     suspend fun getStatus(id: String): Result<UserFeedItem>
 
     suspend fun getStatusContext(id: String): Result<ImmutableList<UserFeedItem>>
+
+    suspend fun favouriteStatus(id: String): Result<UserFeedItem>
+
+    suspend fun undoFavouriteStatus(id: String): Result<UserFeedItem>
+
+    suspend fun reblogStatus(id: String): Result<UserFeedItem>
 }

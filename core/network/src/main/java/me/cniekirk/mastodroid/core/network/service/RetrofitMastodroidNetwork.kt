@@ -46,6 +46,15 @@ class RetrofitMastodroidNetwork @Inject constructor(
     override suspend fun getStatusContext(id: String, token: String): Result<NetworkStatusContext> =
         safeApiCall { mastodonService.getStatusContext(id, "Bearer $token") }
 
+    override suspend fun favouriteStatus(id: String, token: String): Result<NetworkStatus> =
+        safeApiCall { mastodonService.favouriteStatus(id, "Bearer $token") }
+
+    override suspend fun unfavouriteStatus(id: String, token: String): Result<NetworkStatus> =
+        safeApiCall { mastodonService.undoFavouriteStatus(id, "Bearer $token") }
+
+    override suspend fun reblogStatus(id: String, token: String): Result<NetworkStatus> =
+        safeApiCall { mastodonService.reblogStatus(id, "Bearer $token") }
+
     companion object {
         const val INSTANCES_TOKEN = "Bearer kTr2ps4J5LLrKvbYBnxOPaMjti3SCQTzlaCCuWcS2O6JoehCdeUxfwwGdpjrrQbHmWVighDfVl3tTf1oTrNGMiPX3p5sHmItE3tE9SX813kxFLmZE6D2BqKvWjnxet5K"
     }

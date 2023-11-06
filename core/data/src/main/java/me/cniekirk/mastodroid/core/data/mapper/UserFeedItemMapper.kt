@@ -28,7 +28,7 @@ fun NetworkStatus.toUserFeedItem(replyToUser: String): UserFeedItem {
         )
     }
 
-    val html = Html.fromHtml(this.content, HtmlCompat.FROM_HTML_MODE_LEGACY).removeTrailingWhitespace()
+//    val html = Html.fromHtml(this.content, HtmlCompat.FROM_HTML_MODE_LEGACY).removeTrailingWhitespace()
     val instant = Instant.parse(this.createdAt)
     val formatter = DateTimeFormatter.ofPattern(TIME_FORMAT)
         .withZone(ZoneId.systemDefault())
@@ -40,13 +40,15 @@ fun NetworkStatus.toUserFeedItem(replyToUser: String): UserFeedItem {
         userProfilePictureUrl = this.account?.avatar ?: "",
         timeSincePost = instant.toEpochMilli().getElapsedTime(),
         timeString = formatter.format(instant),
-        content = html,
+        content = this.content ?: "",
         numComments = this.repliesCount ?: 0,
         numReblogs = this.reblogsCount ?: 0,
         numFavourites = this.favouritesCount ?: 0,
         client = this.application?.name ?: "",
         mediaInfo = media?.toImmutableList() ?: persistentListOf(),
         replyToUser = replyToUser,
+        isFavourited = this.favourited == true,
+        isReblogged = this.reblogged == true,
         rebloggedPost = if (this.reblog != null) this.reblog?.toUserFeedItem("") else null
     )
 }
@@ -96,13 +98,4 @@ private fun Long.getElapsedTime(): String {
             "${diff / YEAR_MILLIS}Y"
         }
     }
-}
-
-private fun Spanned.removeTrailingWhitespace(): Spanned {
-    var i = this.length
-
-    while (i-- > 0 && this[i].isWhitespace()) {
-    }
-
-    return this.subSequence(0, i + 1) as Spanned
 }
