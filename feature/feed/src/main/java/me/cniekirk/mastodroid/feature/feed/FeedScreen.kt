@@ -204,6 +204,7 @@ internal fun FeedScreen(
 private fun FeedScreenPreview() {
     val feedItem = UserFeedItem(
         1,
+        "https://mastodon.social/@someone/112233",
         "Example User",
         "example",
         "",

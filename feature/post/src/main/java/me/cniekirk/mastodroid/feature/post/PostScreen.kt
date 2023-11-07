@@ -1,5 +1,6 @@
 package me.cniekirk.mastodroid.feature.post
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,20 +52,30 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import me.cniekirk.mastodroid.core.common.util.getUriFromBitmap
+import me.cniekirk.mastodroid.core.common.util.shareMedia
+import me.cniekirk.mastodroid.core.common.util.shareText
 import me.cniekirk.mastodroid.core.designsystem.MastodroidTheme
 import me.cniekirk.mastodroid.core.designsystem.component.MastodonStatus
 import me.cniekirk.mastodroid.core.designsystem.preview.LoremIpsum30Words
 import me.cniekirk.mastodroid.core.model.UserFeedItem
+import me.cniekirk.mastodroid.core.ui.loadImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import timber.log.Timber
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostRoute(
     viewModel: PostViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
+    val sheetState = rememberModalBottomSheetState()
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -73,18 +85,41 @@ fun PostRoute(
             is PostEffect.ReplyToPost -> {
 
             }
+            is PostEffect.ShareMedia -> {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        viewModel.onDismissShare()
+                    }
+                }
+                scope.launch {
+                    val uris = arrayListOf<Uri>()
+                    sideEffect.mediaUrls.forEach {
+                        context.loadImage(it) { bmp -> uris.add(context.getUriFromBitmap(bmp)) }
+                    }
+                    context.shareMedia(uris)
+                }
+            }
+            is PostEffect.ShareLink -> {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        viewModel.onDismissShare()
+                    }
+                }
+                context.shareText(sideEffect.link)
+            }
         }
     }
 
     PostScreen(
         state = state,
+        sheetState = sheetState,
         onBackPressed = { onBackPressed() },
         onReplyClicked = viewModel::replyPost,
         onReblogClicked = viewModel::reblogPost,
         onFavouriteClicked = viewModel::favouritePost,
         onShareClicked = viewModel::sharePost,
-        onShareLinkClicked = {},
-        onShareMediaClicked = {},
+        onShareLinkClicked = viewModel::shareLink,
+        onShareMediaClicked = viewModel::shareMedia,
         onDismissShare = viewModel::onDismissShare
     )
 }
@@ -93,6 +128,7 @@ fun PostRoute(
 @Composable
 fun PostScreen(
     state: PostState,
+    sheetState: SheetState,
     onBackPressed: () -> Unit,
     onReplyClicked: (postId: String) -> Unit,
     onReblogClicked: (postId: String) -> Unit,
@@ -103,7 +139,6 @@ fun PostScreen(
     onDismissShare: () -> Unit
 ) {
     val context = LocalContext.current
-    val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     if (state.bottomShareSheet.isVisible) {
@@ -193,7 +228,7 @@ fun PostScreen(
                             onItemClicked = {},
                             onReplyClicked = {},
                             onReblogClicked = {},
-                            onShareClicked = {},
+                            onShareClicked = { onShareClicked(state.post.id.toString()) },
                             onFavouriteClicked = {},
                             isPost = true
                         )
@@ -308,6 +343,7 @@ fun PostAnalyticsPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun PostScreenPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) {
@@ -315,6 +351,7 @@ fun PostScreenPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) 
         isLoading = false,
         post = UserFeedItem(
             1,
+            "https://mastodon.social/@someone/112233",
             "Example User",
             "exampleuser",
             "",
@@ -333,7 +370,7 @@ fun PostScreenPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) 
     )
     MastodroidTheme {
         Surface {
-            PostScreen(state = state, onBackPressed = {}, {}, {}, {}, {}, {}, {}, {})
+            PostScreen(state = state, sheetState = rememberModalBottomSheetState(), onBackPressed = {}, {}, {}, {}, {}, {}, {}, {})
         }
     }
 }

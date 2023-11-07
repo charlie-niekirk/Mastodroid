@@ -16,6 +16,7 @@ dependencies {
     api(libs.ui.tooling)
     api(libs.ui.tooling.preview)
     api(libs.material3)
+    api(libs.coil.compose)
 
     implementation(project(":core:model"))
 

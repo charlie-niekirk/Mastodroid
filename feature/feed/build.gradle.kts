@@ -13,6 +13,8 @@ android {
 
 dependencies {
     implementation(project(":core:network"))
+    implementation(project(":core:domain"))
+
     implementation(libs.immutable)
     implementation(libs.bundles.paging)
     implementation(libs.coil.compose)

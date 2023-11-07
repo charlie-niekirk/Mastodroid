@@ -338,6 +338,7 @@ private fun Spanned.removeTrailingWhitespace(): Spanned {
 fun MastodonStatusPreview(@PreviewParameter(LoremIpsum30Words::class) text: String) {
     val feedItem = UserFeedItem(
         1,
+        "https://mastodon.social/@someone/112233",
         "Example User",
         "example",
         "",

@@ -35,6 +35,7 @@ fun NetworkStatus.toUserFeedItem(replyToUser: String): UserFeedItem {
 
     return UserFeedItem(
         id = this.id?.toLong() ?: 0L,
+        url = this.url ?: "",
         userName = this.account?.displayName ?: "",
         userHandle = this.account?.username ?: "",
         userProfilePictureUrl = this.account?.avatar ?: "",

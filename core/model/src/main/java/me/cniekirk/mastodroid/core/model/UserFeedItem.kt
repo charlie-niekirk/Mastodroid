@@ -15,6 +15,7 @@ data class MediaInfo(
 
 data class UserFeedItem(
     val id: Long,
+    val url: String,
     val userName: String,
     val userHandle: String,
     val userProfilePictureUrl: String,

@@ -23,4 +23,8 @@ sealed class PostEffect {
     data class Error(@StringRes val message: Int) : PostEffect()
 
     data class ReplyToPost(val postId: String) : PostEffect()
+
+    data class ShareMedia(val mediaUrls: List<String>) : PostEffect()
+
+    data class ShareLink(val link: String) : PostEffect()
 }

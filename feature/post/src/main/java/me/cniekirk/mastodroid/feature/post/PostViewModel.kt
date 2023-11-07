@@ -118,6 +118,25 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun shareLink() = intent {
+        val id = state.bottomShareSheet.postId
+        if (id?.equals(state.post?.id.toString(), true) == true) {
+            postSideEffect(PostEffect.ShareLink(state.post?.url ?: ""))
+        } else {
+            // Try and find in comments
+        }
+    }
+
+    fun shareMedia() = intent {
+        val id = state.bottomShareSheet.postId
+        if (id?.equals(state.post?.id.toString(), true) == true) {
+            val media = state.post?.mediaInfo
+            postSideEffect(PostEffect.ShareMedia(media?.map { it.url } ?: listOf()))
+        } else {
+            // Try and find in comments
+        }
+    }
+
     fun onDismissShare() = intent {
         reduce {
             state.copy(
