@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    api(libs.core.ktx)
     api(libs.ui)
     api(libs.ui.graphics)
     api(libs.ui.tooling)

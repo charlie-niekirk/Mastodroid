@@ -2,6 +2,8 @@ package me.cniekirk.mastodroid.feature.post
 
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
@@ -40,6 +42,8 @@ class PostViewModelTest {
             // Then
             expectState { copy(isLoading = false) }
             expectSideEffect(PostEffect.Error(R.string.post_load_error))
+            coVerify(exactly = 1) { statusRepository.getStatus(POST_ID) }
+            coVerify(exactly = 0) { statusRepository.getStatusContext(any()) }
         }
     }
 
@@ -72,6 +76,11 @@ class PostViewModelTest {
                     comments = comments
                 )
             }
+
+            coVerifySequence {
+                statusRepository.getStatus(POST_ID)
+                statusRepository.getStatusContext(POST_ID)
+            }
         }
     }
 
@@ -99,6 +108,11 @@ class PostViewModelTest {
 
             expectState { copy(areCommentsLoading = false) }
             expectSideEffect(PostEffect.Error(R.string.post_load_error))
+
+            coVerifySequence {
+                statusRepository.getStatus(POST_ID)
+                statusRepository.getStatusContext(POST_ID)
+            }
         }
     }
 
@@ -107,6 +121,7 @@ class PostViewModelTest {
 
         val feedItem = UserFeedItem(
             1,
+            "",
             "Example User",
             "example",
             "",

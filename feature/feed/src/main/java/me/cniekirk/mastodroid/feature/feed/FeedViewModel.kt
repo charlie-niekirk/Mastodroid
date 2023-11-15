@@ -15,6 +15,7 @@ import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.data.mapper.toUserFeedItem
 import me.cniekirk.mastodroid.core.data.repository.AuthenticationRepository
 import me.cniekirk.mastodroid.core.data.repository.HomeFeedPagingSource
+import me.cniekirk.mastodroid.core.data.repository.StatusRepository
 import me.cniekirk.mastodroid.core.model.AuthStatus.LOGGED_IN
 import me.cniekirk.mastodroid.core.model.AuthStatus.NO_TOKEN
 import me.cniekirk.mastodroid.core.model.AuthStatus.TOKEN_EXPIRED
@@ -30,22 +31,12 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
-    private val homeFeedPagingSource: HomeFeedPagingSource,
+    private val statusRepository: StatusRepository,
     private val postActionsUseCase: PostActionsUseCase
 ) : ViewModel(), ContainerHost<FeedState, FeedEffect> {
 
     override val container = container<FeedState, FeedEffect>(
-        FeedState(
-            feedItems = Pager(
-                PagingConfig(pageSize = 20)
-            ) {
-                homeFeedPagingSource
-            }.flow
-                .map { pagingData ->
-                    pagingData.map { networkStatus -> networkStatus.toUserFeedItem("") }
-                }
-                .cachedIn(viewModelScope)
-        )
+        FeedState(feedItems = statusRepository.getStatusFeed().cachedIn(viewModelScope))
     ) {
         // Check if logged in
         checkAuthStatus()
@@ -70,20 +61,22 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-//    fun favouritePost(id: String) = intent {
-//        when (postActionsUseCase.invoke(PostAction.Favourite(id))) {
-//            is Result.Failure -> {
-//                postSideEffect(FeedEffect.Error(R.string.post_action_error))
-//            }
-//            is Result.Success -> {
+    fun favouritePost(id: String) = intent {
+        when (postActionsUseCase.invoke(PostAction.Favourite(id))) {
+            is Result.Failure -> {
+                postSideEffect(FeedEffect.Error(R.string.post_action_error))
+            }
+            is Result.Success -> {
+                // TODO: Do the animation for the like button
 //                reduce {
 //                    state.copy(
-//                        comments = state.comments
+//
 //                    )
 //                }
-//            }
-//        }
-//    }
+            }
+        }
+    }
+
 //
 //    fun reblogPost(id: String) = intent {
 //        when (postActionsUseCase.invoke(PostAction.Reblog(id))) {

@@ -18,4 +18,6 @@ dependencies {
     implementation(libs.paging)
 
     testImplementation(project(":core:testing"))
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
 }

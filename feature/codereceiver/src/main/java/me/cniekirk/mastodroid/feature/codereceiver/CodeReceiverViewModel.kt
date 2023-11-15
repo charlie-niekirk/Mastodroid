@@ -31,6 +31,7 @@ class CodeReceiverViewModel @Inject constructor(
         when (val response = authenticationRepository.getAndPersistToken(codeReceiverArgs.code)) {
             is Result.Failure -> {
                 // Post error effect
+                Timber.e(response.error)
             }
             is Result.Success -> {
                 postSideEffect(CodeReceiverEffect.Success)

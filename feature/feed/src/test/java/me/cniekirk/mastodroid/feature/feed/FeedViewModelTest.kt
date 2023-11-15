@@ -3,6 +3,7 @@ package me.cniekirk.mastodroid.feature.feed
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import me.cniekirk.domain.PostActionsUseCase
 import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.data.repository.AuthenticationRepository
 import me.cniekirk.mastodroid.core.data.repository.HomeFeedPagingSource
@@ -15,12 +16,13 @@ class FeedViewModelTest {
 
     private val authenticationRepository: AuthenticationRepository = mockk()
     private val homeFeedPagingSource: HomeFeedPagingSource = mockk()
+    private val postActionsUseCase: PostActionsUseCase = mockk()
 
     private lateinit var sut: FeedViewModel
 
     @Before
     fun setUp() {
-        sut = FeedViewModel(authenticationRepository, homeFeedPagingSource)
+        sut = FeedViewModel(authenticationRepository, homeFeedPagingSource, postActionsUseCase)
     }
 
     @Test

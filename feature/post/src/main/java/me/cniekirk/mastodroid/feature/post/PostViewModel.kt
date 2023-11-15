@@ -1,16 +1,12 @@
 package me.cniekirk.mastodroid.feature.post
 
-import android.text.Spanned
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toImmutableList
 import me.cniekirk.domain.PostActionsUseCase
 import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.data.repository.StatusRepository
 import me.cniekirk.mastodroid.core.model.PostAction
-import me.cniekirk.mastodroid.core.ui.toAnnotatedString
 import me.cniekirk.mastodroid.feature.post.navigation.PostArgs
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent

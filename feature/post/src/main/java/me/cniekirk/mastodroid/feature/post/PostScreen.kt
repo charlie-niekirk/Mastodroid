@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Reply
@@ -149,41 +151,62 @@ fun PostScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp)
+                    .padding(horizontal = 32.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(8.dp)
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            RoundedCornerShape(8.dp)
+                        )
                         .clickable { onShareLinkClicked() },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .size(28.dp),
                         imageVector = Icons.Default.ContentCopy,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                         contentDescription = null
                     )
 
                     Text(
-                        modifier = Modifier.padding(top = 4.dp),
+                        modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
                         text = stringResource(id = R.string.share_link_text)
                     )
                 }
                 Column(
                     modifier = Modifier
-                        .padding(8.dp)
+                        .weight(1f)
+                        .padding(start = 8.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            RoundedCornerShape(8.dp)
+                        )
                         .clickable { onShareMediaClicked() },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .size(28.dp),
                         imageVector = Icons.Default.Image,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                         contentDescription = null
                     )
 
                     Text(
-                        modifier = Modifier.padding(top = 4.dp),
+                        modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
                         text = stringResource(id = R.string.share_media_text)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
@@ -229,7 +252,7 @@ fun PostScreen(
                             onReplyClicked = {},
                             onReblogClicked = {},
                             onShareClicked = { onShareClicked(state.post.id.toString()) },
-                            onFavouriteClicked = {},
+                            onFavouriteClicked = { onFavouriteClicked(state.post.id.toString()) },
                             isPost = true
                         )
                     }
