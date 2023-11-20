@@ -13,29 +13,26 @@ fun AppRoot(
     windowSizeClass: WindowSizeClass,
     displayFeatures: List<DisplayFeature>
 ) {
-    val navigationType: NavigationType
-    val contentType: ContentType
-
-    when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
-            // Tablet/foldable oriented UI
-            navigationType = NavigationType.NAVIGATION_RAIL
-            contentType = ContentType.DUAL_PANE
-        }
-        else -> {
-            // Normal phone oriented UI
-            navigationType = NavigationType.BOTTOM_NAVIGATION
-            contentType = ContentType.SINGLE_PANE
-        }
-    }
+//    val navigationType: NavigationType
+//    val contentType: ContentType
+//
+//    when (windowSizeClass.widthSizeClass) {
+//        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+//            // Tablet/foldable oriented UI
+//            navigationType = NavigationType.NAVIGATION_RAIL
+//            contentType = ContentType.DUAL_PANE
+//        }
+//        else -> {
+//            // Normal phone oriented UI
+//            navigationType = NavigationType.BOTTOM_NAVIGATION
+//            contentType = ContentType.SINGLE_PANE
+//        }
+//    }
 
     val navController = rememberNavController()
 
     RootNavHost(
         navController = navController,
-        contentType = contentType,
         displayFeatures = displayFeatures,
-        isExpandedWindowSize = navigationType == NavigationType.NAVIGATION_RAIL,
-        navigationType = navigationType
     )
 }

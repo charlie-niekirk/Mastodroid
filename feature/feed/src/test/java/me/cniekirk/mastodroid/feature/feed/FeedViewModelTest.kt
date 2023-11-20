@@ -6,8 +6,12 @@ import kotlinx.coroutines.test.runTest
 import me.cniekirk.domain.PostActionsUseCase
 import me.cniekirk.mastodroid.core.common.util.Result
 import me.cniekirk.mastodroid.core.data.repository.AuthenticationRepository
-import me.cniekirk.mastodroid.core.data.repository.HomeFeedPagingSource
+import me.cniekirk.mastodroid.core.data.repository.StatusRepository
 import me.cniekirk.mastodroid.core.model.AuthStatus
+import me.cniekirk.mastodroid.feature.feed.feed.FeedEffect
+import me.cniekirk.mastodroid.feature.feed.feed.FeedState
+import me.cniekirk.mastodroid.feature.feed.feed.FeedViewModel
+import me.cniekirk.mastodroid.feature.feed.feed.ViewState
 import org.junit.Before
 import org.junit.Test
 import org.orbitmvi.orbit.test.test
@@ -15,14 +19,14 @@ import org.orbitmvi.orbit.test.test
 class FeedViewModelTest {
 
     private val authenticationRepository: AuthenticationRepository = mockk()
-    private val homeFeedPagingSource: HomeFeedPagingSource = mockk()
+    private val statusRepository: StatusRepository = mockk()
     private val postActionsUseCase: PostActionsUseCase = mockk()
 
     private lateinit var sut: FeedViewModel
 
     @Before
     fun setUp() {
-        sut = FeedViewModel(authenticationRepository, homeFeedPagingSource, postActionsUseCase)
+        sut = FeedViewModel(authenticationRepository, statusRepository, postActionsUseCase)
     }
 
     @Test

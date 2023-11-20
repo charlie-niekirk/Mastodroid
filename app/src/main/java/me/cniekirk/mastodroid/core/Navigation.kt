@@ -14,10 +14,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigation.suite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
+import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,8 +36,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
-import me.cniekirk.mastodroid.core.designsystem.ContentType
-import me.cniekirk.mastodroid.core.designsystem.NavigationType
 import me.cniekirk.mastodroid.core.designsystem.activityDefaultExit
 import me.cniekirk.mastodroid.core.designsystem.activityDefaultPopEnter
 import me.cniekirk.mastodroid.feature.codereceiver.navigation.codeReceiverScreen
@@ -44,8 +46,6 @@ import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListS
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
 import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
-import me.cniekirk.mastodroid.feature.post.navigation.navigateToPost
-import me.cniekirk.mastodroid.feature.post.navigation.postScreen
 import me.cniekirk.mastodroid.feature.settings.navigation.navigateToSettings
 import me.cniekirk.mastodroid.feature.settings.navigation.settingsScreen
 
@@ -59,10 +59,7 @@ val tabs = listOf(
 @Composable
 fun RootNavHost(
     navController: NavHostController,
-    contentType: ContentType,
     displayFeatures: List<DisplayFeature>,
-    isExpandedWindowSize: Boolean,
-    navigationType: NavigationType,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -77,10 +74,7 @@ fun RootNavHost(
             val innerController = rememberNavController()
             MastodroidTabContainer(
                 navController = innerController,
-                contentType = contentType,
                 displayFeatures = displayFeatures,
-                isExpandedWindowSize = isExpandedWindowSize,
-                navigationType = navigationType,
                 onSettingsPressed = { navController.navigateToSettings() }
             )
         }
@@ -89,83 +83,97 @@ fun RootNavHost(
     }
 }
 
+@OptIn(
+    ExperimentalMaterial3AdaptiveNavigationSuiteApi::class,
+    ExperimentalMaterial3AdaptiveApi::class
+)
 @Composable
 fun MastodroidTabContainer(
     navController: NavHostController,
-    contentType: ContentType,
     displayFeatures: List<DisplayFeature>,
-    isExpandedWindowSize: Boolean,
-    navigationType: NavigationType,
     modifier: Modifier = Modifier,
     onSettingsPressed: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val isBottomBarVisible = rememberSaveable { mutableStateOf(false) }
     val currentDestination = navBackStackEntry?.destination
+    val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
 
-    when (navigationType) {
-        NavigationType.BOTTOM_NAVIGATION -> {
-            Scaffold(
-                bottomBar = {
-                    AnimatedVisibility(
-                        visible = isBottomBarVisible.value,
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { -it })
-                    ) {
-                        NavigationBar {
-                            tabs.forEachIndexed { index, item ->
-                                NavigationBarItem(
-                                    icon = { Icon(item.icon, contentDescription = item.icon.name) },
-                                    label = { Text(item.label) },
-                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                                    onClick = {
-                                        navController.navigate(item.route) {
-                                            // Pop up to the start destination of the graph to
-                                            // avoid building up a large stack of destinations
-                                            // on the back stack as users select items
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            // Restore state when reselecting a previously selected item
-                                            restoreState = true
-                                        }
-                                    }
-                                )
+//    Scaffold(
+//        bottomBar = {
+//            AnimatedVisibility(
+//                visible = isBottomBarVisible.value,
+//                enter = slideInVertically(initialOffsetY = { it }),
+//                exit = slideOutVertically(targetOffsetY = { -it })
+//            ) {
+//                NavigationBar {
+//                    tabs.forEachIndexed { index, item ->
+//                        NavigationBarItem(
+//                            icon = { Icon(item.icon, contentDescription = item.icon.name) },
+//                            label = { Text(item.label) },
+//                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+//                            onClick = {
+//                                navController.navigate(item.route) {
+//                                    // Pop up to the start destination of the graph to
+//                                    // avoid building up a large stack of destinations
+//                                    // on the back stack as users select items
+//                                    popUpTo(navController.graph.findStartDestination().id) {
+//                                        saveState = true
+//                                    }
+//                                    launchSingleTop = true
+//                                    // Restore state when reselecting a previously selected item
+//                                    restoreState = true
+//                                }
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    ) {
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            tabs.forEachIndexed { index, item ->
+                item(
+                    icon = { Icon(item.icon, contentDescription = item.icon.name) },
+                    label = { Text(item.label) },
+                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                    onClick = {
+                        navController.navigate(item.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
                             }
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
                     }
-                }
-            ) {
-                NavHost(
-                    modifier = modifier.padding(it),
-                    navController = navController,
-                    startDestination = TabDestination.Home.route
-                ) {
-                    // TrackBuddy search screen
-                    homeGraph(
-                        navController,
-                        isExpandedWindowSize,
-                        displayFeatures,
-                        onSettingsPressed = { onSettingsPressed() },
-                        onChangeNavigationBarVisibility = { isVisible ->
-                            isBottomBarVisible.value = isVisible
-                        }
-                    )
-                }
+                )
             }
         }
-        NavigationType.NAVIGATION_RAIL -> {
-//            NavigationRail {
-//
-//            }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = TabDestination.Home.route
+        ) {
+            // TrackBuddy search screen
+            homeGraph(
+                navController,
+                displayFeatures,
+                onSettingsPressed = { onSettingsPressed() },
+                onChangeNavigationBarVisibility = { isVisible ->
+                    isBottomBarVisible.value = isVisible
+                }
+            )
         }
     }
 }
 
 fun NavGraphBuilder.homeGraph(
     navController: NavController,
-    isExpandedWindowSize: Boolean,
     features: List<DisplayFeature>,
     onSettingsPressed: () -> Unit,
     onChangeNavigationBarVisibility: (Boolean) -> Unit
@@ -178,7 +186,6 @@ fun NavGraphBuilder.homeGraph(
             navigateToLogin = { navController.navigateToOnboarding() },
             onSuccess = { onChangeNavigationBarVisibility(true) },
             onSettingsPressed = { onSettingsPressed() },
-            onItemClicked = { navController.navigateToPost(it) }
         )
         onboardingScreen(
             onJoinDefaultClicked = {},
@@ -186,13 +193,10 @@ fun NavGraphBuilder.homeGraph(
             onLoginClicked = { navController.navigateToInstanceList(true) }
         )
         instanceListScreen(
-            onBackPressed = { navController.popBackStack() }
+            onBackPressed = navController::popBackStack
         )
         codeReceiverScreen(
             tokenSaved = { navController.navigateToFeed() }
-        )
-        postScreen(
-            onBackPressed = { navController.popBackStack() }
         )
     }
 }

@@ -53,7 +53,7 @@ import me.cniekirk.mastodroid.core.model.UserFeedItem
 fun MastodonStatus(
     userFeedItem: UserFeedItem,
     isPost: Boolean = false,
-    onItemClicked: (postId: String) -> Unit,
+    onItemClicked: (post: UserFeedItem) -> Unit,
     onReplyClicked: (postId: String) -> Unit,
     onReblogClicked: (postId: String) -> Unit,
     onFavouriteClicked: (postId: String) -> Unit,
@@ -72,7 +72,7 @@ fun MastodonStatus(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onItemClicked(postId) }
+            .clickable { onItemClicked(item) }
     ) {
         if (userFeedItem.replyToUser.isNotEmpty()) {
             Row(

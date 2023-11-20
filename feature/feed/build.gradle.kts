@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.bundles.paging)
     implementation(libs.coil.compose)
     implementation(libs.material.icons)
+    implementation(libs.material3.adaptive)
+    implementation(libs.androidx.material3.window.size)
 
     testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)

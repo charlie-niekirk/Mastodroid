@@ -4,4 +4,16 @@
     <string name="settings_cd">Settings</string>
     <string name="auth_status_error">Error checking auth status!</string>
     <string name="post_action_error">Operation failed!</string>
+
+    <string name="post_title">Post</string>
+    <string name="back_cd">Back</string>
+    <string name="post_load_error">Error loading post!</string>
+    <string name="reposts_format">%1$d reposts</string>
+    <string name="favourites_format">%1$d favourites</string>
+    <string name="client_time_format">%1$s via %2$s</string>
+    <string name="share_link_text">Share link</string>
+    <string name="share_media_text">Share media</string>
+
+    <string name="no_item_selected_title">No status selected</string>
+    <string name="no_item_selected_description">Select a status from the list to view it here</string>
 </resources>
