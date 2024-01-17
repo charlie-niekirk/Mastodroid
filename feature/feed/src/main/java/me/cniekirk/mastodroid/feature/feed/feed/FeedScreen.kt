@@ -8,9 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,31 +21,30 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.AnimatedPane
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.GutterSizes
-import androidx.compose.material3.adaptive.HingePolicy
 import androidx.compose.material3.adaptive.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.ListDetailPaneScaffoldState
-import androidx.compose.material3.adaptive.PaneScaffoldDirective
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.ThreePaneScaffoldNavigator
+import androidx.compose.material3.adaptive.calculateStandardPaneScaffoldDirective
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.rememberListDetailPaneScaffoldState
+import androidx.compose.material3.adaptive.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -87,7 +84,7 @@ internal fun StatusListDetailRoute(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val state = viewModel.collectAsState()
-    val listDetailState = rememberListDetailPaneScaffoldState(
+    val listDetailState = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculateStandardPaneScaffoldDirective(currentWindowAdaptiveInfo())
     )
     val bottomSheetState = rememberModalBottomSheetState()
@@ -114,7 +111,7 @@ internal fun StatusListDetailRoute(
 
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
-        scaffoldState = listDetailState,
+        scaffoldState = listDetailState.scaffoldState,
         listPane = {
             AnimatedPane(modifier = Modifier.fillMaxSize()) {
                 when (state.value.viewState) {
@@ -182,65 +179,13 @@ internal fun StatusListDetailRoute(
     )
 }
 
-@ExperimentalMaterial3AdaptiveApi
-fun calculateStandardPaneScaffoldDirective(
-    windowAdaptiveInfo: WindowAdaptiveInfo,
-    verticalHingePolicy: HingePolicy = HingePolicy.AvoidSeparating
-): PaneScaffoldDirective {
-    val maxHorizontalPartitions: Int
-    val contentPadding: PaddingValues
-    val verticalSpacerSize: Dp
-    when (windowAdaptiveInfo.windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> {
-            maxHorizontalPartitions = 1
-            contentPadding = PaddingValues(0.dp)
-            verticalSpacerSize = 0.dp
-        }
-        WindowWidthSizeClass.Medium -> {
-            maxHorizontalPartitions = 1
-            contentPadding = PaddingValues(0.dp)
-            verticalSpacerSize = 0.dp
-        }
-        else -> {
-            maxHorizontalPartitions = 2
-            contentPadding = PaddingValues(24.dp)
-            verticalSpacerSize = 24.dp
-        }
-    }
-    val maxVerticalPartitions: Int
-    val horizontalSpacerSize = 0.dp
-
-    // TODO(conradchen): Confirm the table top mode settings
-    if (windowAdaptiveInfo.windowPosture.isTabletop) {
-        maxVerticalPartitions = 2
-//        horizontalSpacerSize = 24.dp
-    } else {
-        maxVerticalPartitions = 1
-//        horizontalSpacerSize = 0.dp
-    }
-
-    val posture = windowAdaptiveInfo.windowPosture
-
-    return PaneScaffoldDirective(
-        maxHorizontalPartitions,
-        GutterSizes(contentPadding, verticalSpacerSize, horizontalSpacerSize),
-        maxVerticalPartitions,
-        when (verticalHingePolicy) {
-            HingePolicy.AvoidSeparating -> posture.separatingVerticalHingeBounds
-            HingePolicy.AvoidOccluding -> posture.occludingVerticalHingeBounds
-            HingePolicy.AlwaysAvoid -> posture.allVerticalHingeBounds
-            else -> emptyList()
-        }
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 private fun handleSideEffect(
     feedEffect: FeedEffect,
     context: Context,
     scope: CoroutineScope,
     sheetState: SheetState,
-    listDetailState: ListDetailPaneScaffoldState,
+    scaffoldNavigator: ThreePaneScaffoldNavigator,
     toast: (Int) -> Unit,
     onDismissShare: () -> Unit
 ) {
@@ -272,11 +217,11 @@ private fun handleSideEffect(
             context.shareText(feedEffect.link)
         }
         is FeedEffect.ItemClicked -> {
-            listDetailState.navigateTo(ListDetailPaneScaffoldRole.Detail)
+            scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         }
         is FeedEffect.BackPressed -> {
-            if (listDetailState.canNavigateBack()) {
-                listDetailState.navigateBack()
+            if (scaffoldNavigator.canNavigateBack()) {
+                scaffoldNavigator.navigateBack()
             }
         }
     }
@@ -307,61 +252,63 @@ internal fun FeedScreen(
     onShareClicked: (postId: String) -> Unit
 ) {
     val items = state.feedItems.collectAsLazyPagingItems()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    text = stringResource(id = R.string.feed_title),
-                    style = MaterialTheme.typography.titleSmall
-                )
-            },
-            actions = {
-                Icon(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .clickable { onSettingsClicked() },
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
-            }
-        )
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.feed_title),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                },
+                actions = {
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .clickable { onSettingsClicked() },
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
+            when (items.loadState.refresh) {
+                is LoadState.Error -> {
+                    // TODO
+                }
+                LoadState.Loading -> {
+                    Spacer(modifier = Modifier.weight(1f))
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+                is LoadState.NotLoading -> {
+                    LazyColumn(
+                        modifier = Modifier.padding(top = 16.dp),
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(
+                            items.itemCount,
+                            key = items.itemKey { it.id }
+                        ) { index ->
+                            val feedItem = items[index]
 
-        when (items.loadState.refresh) {
-            is LoadState.Error -> {
-                // TODO
-            }
-            LoadState.Loading -> {
-                Spacer(modifier = Modifier.weight(1f))
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.weight(1f))
-            }
-            is LoadState.NotLoading -> {
-                LazyColumn(
-                    modifier = Modifier.padding(top = 16.dp),
-                    state = listState,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(
-                        items.itemCount,
-                        key = items.itemKey { it.id }
-                    ) { index ->
-                        val feedItem = items[index]
-
-                        if (feedItem != null) {
-                            MastodonStatus(
-                                userFeedItem = feedItem,
-                                onItemClicked = { onItemClicked(it) },
-                                onReplyClicked = { onReplyClicked(it) },
-                                onReblogClicked = { onReblogClicked(it) },
-                                onFavouriteClicked = { onFavouriteClicked(it) },
-                                onShareClicked = { onShareClicked(it) }
-                            )
+                            if (feedItem != null) {
+                                MastodonStatus(
+                                    userFeedItem = feedItem,
+                                    onItemClicked = { onItemClicked(it) },
+                                    onReplyClicked = { onReplyClicked(it) },
+                                    onReblogClicked = { onReblogClicked(it) },
+                                    onFavouriteClicked = { onFavouriteClicked(it) },
+                                    onShareClicked = { onShareClicked(it) }
+                                )
+                            }
                         }
                     }
                 }

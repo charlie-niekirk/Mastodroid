@@ -1,18 +1,15 @@
 package me.cniekirk.mastodroid.core
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -75,11 +72,24 @@ fun RootNavHost(
             MastodroidTabContainer(
                 navController = innerController,
                 displayFeatures = displayFeatures,
-                onSettingsPressed = { navController.navigateToSettings() }
+                onSettingsPressed = { navController.navigateToSettings() },
+                onNavigateToLogin = { navController.navigateToOnboarding() }
             )
         }
 
         settingsScreen { navController.popBackStack() }
+
+        onboardingScreen(
+            onJoinDefaultClicked = {},
+            onSearchForServerClicked = {},
+            onLoginClicked = { navController.navigateToInstanceList(true) }
+        )
+        instanceListScreen(
+            onBackPressed = navController::popBackStack
+        )
+        codeReceiverScreen(
+            tokenSaved = { navController.navigate(RootDestinations.Tabs.route) }
+        )
     }
 }
 
@@ -92,48 +102,22 @@ fun MastodroidTabContainer(
     navController: NavHostController,
     displayFeatures: List<DisplayFeature>,
     modifier: Modifier = Modifier,
-    onSettingsPressed: () -> Unit
+    onSettingsPressed: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val isBottomBarVisible = rememberSaveable { mutableStateOf(false) }
     val currentDestination = navBackStackEntry?.destination
     val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
 
-//    Scaffold(
-//        bottomBar = {
-//            AnimatedVisibility(
-//                visible = isBottomBarVisible.value,
-//                enter = slideInVertically(initialOffsetY = { it }),
-//                exit = slideOutVertically(targetOffsetY = { -it })
-//            ) {
-//                NavigationBar {
-//                    tabs.forEachIndexed { index, item ->
-//                        NavigationBarItem(
-//                            icon = { Icon(item.icon, contentDescription = item.icon.name) },
-//                            label = { Text(item.label) },
-//                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-//                            onClick = {
-//                                navController.navigate(item.route) {
-//                                    // Pop up to the start destination of the graph to
-//                                    // avoid building up a large stack of destinations
-//                                    // on the back stack as users select items
-//                                    popUpTo(navController.graph.findStartDestination().id) {
-//                                        saveState = true
-//                                    }
-//                                    launchSingleTop = true
-//                                    // Restore state when reselecting a previously selected item
-//                                    restoreState = true
-//                                }
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    ) {
+    val barColors = NavigationBarItemDefaults.colors()
+    val railColors = NavigationRailItemDefaults.colors()
+    val drawerColors = NavigationDrawerItemDefaults.colors()
+
     NavigationSuiteScaffold(
+        modifier = Modifier.fillMaxSize(),
         navigationSuiteItems = {
-            tabs.forEachIndexed { index, item ->
+            tabs.forEach { item ->
                 item(
                     icon = { Icon(item.icon, contentDescription = item.icon.name) },
                     label = { Text(item.label) },
@@ -153,7 +137,7 @@ fun MastodroidTabContainer(
                     }
                 )
             }
-        }
+        },
     ) {
         NavHost(
             navController = navController,
@@ -164,6 +148,7 @@ fun MastodroidTabContainer(
                 navController,
                 displayFeatures,
                 onSettingsPressed = { onSettingsPressed() },
+                onNavigateToLogin = { onNavigateToLogin() },
                 onChangeNavigationBarVisibility = { isVisible ->
                     isBottomBarVisible.value = isVisible
                 }
@@ -176,6 +161,7 @@ fun NavGraphBuilder.homeGraph(
     navController: NavController,
     features: List<DisplayFeature>,
     onSettingsPressed: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     onChangeNavigationBarVisibility: (Boolean) -> Unit
 ) {
     navigation(
@@ -183,20 +169,9 @@ fun NavGraphBuilder.homeGraph(
         route = TabDestination.Home.route
     ) {
         feedScreen(
-            navigateToLogin = { navController.navigateToOnboarding() },
+            navigateToLogin = { onNavigateToLogin() },
             onSuccess = { onChangeNavigationBarVisibility(true) },
             onSettingsPressed = { onSettingsPressed() },
-        )
-        onboardingScreen(
-            onJoinDefaultClicked = {},
-            onSearchForServerClicked = {},
-            onLoginClicked = { navController.navigateToInstanceList(true) }
-        )
-        instanceListScreen(
-            onBackPressed = navController::popBackStack
-        )
-        codeReceiverScreen(
-            tokenSaved = { navController.navigateToFeed() }
         )
     }
 }
