@@ -8,19 +8,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.PermMedia
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -129,7 +136,10 @@ internal fun StatusListDetailRoute(
                             onReplyClicked = {},
                             onReblogClicked = {},
                             onFavouriteClicked = {},
-                            onShareClicked = {}
+                            onShareClicked = viewModel::sharePost,
+                            onShareLink = viewModel::shareLink,
+                            onShareMedia = viewModel::shareMedia,
+                            onDismissBottomSheet = viewModel::onDismissShare
                         )
                     }
                     AUTH_ERROR -> {
@@ -249,7 +259,10 @@ internal fun FeedScreen(
     onReplyClicked: (postId: String) -> Unit,
     onReblogClicked: (postId: String) -> Unit,
     onFavouriteClicked: (postId: String) -> Unit,
-    onShareClicked: (postId: String) -> Unit
+    onShareClicked: (postId: String) -> Unit,
+    onShareLink: () -> Unit,
+    onShareMedia: () -> Unit,
+    onDismissBottomSheet: () -> Unit
 ) {
     val items = state.feedItems.collectAsLazyPagingItems()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -278,40 +291,131 @@ internal fun FeedScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-            when (items.loadState.refresh) {
-                is LoadState.Error -> {
-                    // TODO
-                }
-                LoadState.Loading -> {
-                    Spacer(modifier = Modifier.weight(1f))
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-                is LoadState.NotLoading -> {
-                    LazyColumn(
-                        modifier = Modifier.padding(top = 16.dp),
-                        state = listState,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        items(
-                            items.itemCount,
-                            key = items.itemKey { it.id }
-                        ) { index ->
-                            val feedItem = items[index]
-
-                            if (feedItem != null) {
-                                MastodonStatus(
-                                    userFeedItem = feedItem,
-                                    onItemClicked = { onItemClicked(it) },
-                                    onReplyClicked = { onReplyClicked(it) },
-                                    onReblogClicked = { onReblogClicked(it) },
-                                    onFavouriteClicked = { onFavouriteClicked(it) },
-                                    onShareClicked = { onShareClicked(it) }
-                                )
-                            }
-                        }
+            LazyColumn(
+                modifier = Modifier.padding(top = 16.dp),
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                if (items.loadState.refresh == LoadState.Loading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                        )
                     }
                 }
+
+                items(
+                    items.itemCount,
+                    key = items.itemKey { it.id }
+                ) { index ->
+                    val feedItem = items[index]
+
+                    if (feedItem != null) {
+                        MastodonStatus(
+                            userFeedItem = feedItem,
+                            onItemClicked = { onItemClicked(it) },
+                            onReplyClicked = { onReplyClicked(it) },
+                            onReblogClicked = { onReblogClicked(it) },
+                            onFavouriteClicked = { onFavouriteClicked(it) },
+                            onShareClicked = { onShareClicked(it) }
+                        )
+                    }
+                }
+
+                if (items.loadState.append == LoadState.Loading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                        )
+                    }
+                }
+            }
+
+            val modalSheetState = rememberModalBottomSheetState()
+
+            if (state.postState.bottomShareSheet.isVisible &&
+                state.postState.bottomShareSheet.postId != null) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        onDismissBottomSheet()
+                    },
+                    sheetState = modalSheetState
+                ) {
+                    ShareSheetContent(
+                        onShareMedia = { onShareMedia() },
+                        onShareLink = { onShareLink() }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShareSheetContent(
+    onShareMedia: () -> Unit,
+    onShareLink: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(vertical = 32.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
+                .padding(16.dp)
+                .clickable { onShareLink() },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.Link,
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = stringResource(id = R.string.share_link_text)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
+                .padding(16.dp)
+                .clickable { onShareMedia() },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.PermMedia,
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = stringResource(id = R.string.share_media_text)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun ShareSheetPreview() {
+    MastodroidTheme {
+        Surface {
+            ModalBottomSheet(
+                onDismissRequest = {},
+                sheetState = rememberModalBottomSheetState()
+            ) {
+                ShareSheetContent(
+                    onShareMedia = {},
+                    onShareLink = {}
+                )
             }
         }
     }
@@ -341,7 +445,7 @@ private fun FeedScreenPreview() {
     val state = FeedState(viewState = SUCCESS, feedItems = MutableStateFlow(PagingData.from(listOf(feedItem, feedItem.copy(id = 2), feedItem.copy(id = 3)))))
     MastodroidTheme {
         Surface {
-            FeedScreen(state, rememberLazyListState(), {}, {}, {}, {}, {}, {})
+            FeedScreen(state, rememberLazyListState(), {}, {}, {}, {}, {}, {}, {}, {}, {})
         }
     }
 }

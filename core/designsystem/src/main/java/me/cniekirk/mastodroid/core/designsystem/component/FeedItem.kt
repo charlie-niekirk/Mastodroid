@@ -1,6 +1,5 @@
 package me.cniekirk.mastodroid.core.designsystem.component
 
-import android.content.res.ColorStateList
 import android.text.Html
 import android.text.Spanned
 import android.widget.TextView

@@ -21,15 +21,11 @@ internal class CodeReceiverArgs(val code: String) {
             this(checkNotNull(savedStateHandle[CODE_ARG_ID]) as String)
 }
 
-fun NavGraphBuilder.codeReceiverScreen(
-    tokenSaved: () -> Unit
-) {
+fun NavGraphBuilder.codeReceiverScreen(tokenSaved: () -> Unit) {
     composable(
         route = CODE_RECEIVER_NAVIGATION_ROUTE,
         deepLinks = listOf(navDeepLink { uriPattern = "$URI?$CODE_ARG_ID={$CODE_ARG_ID}" })
     ) {
-        CodeReceiverRoute {
-            tokenSaved()
-        }
+        CodeReceiverRoute { tokenSaved() }
     }
 }

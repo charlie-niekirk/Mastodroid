@@ -35,12 +35,14 @@ import androidx.navigation.navigation
 import androidx.window.layout.DisplayFeature
 import me.cniekirk.mastodroid.core.designsystem.activityDefaultExit
 import me.cniekirk.mastodroid.core.designsystem.activityDefaultPopEnter
+import me.cniekirk.mastodroid.feature.codereceiver.navigation.CODE_RECEIVER_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.codereceiver.navigation.codeReceiverScreen
 import me.cniekirk.mastodroid.feature.feed.navigation.FEED_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.feed.navigation.feedScreen
 import me.cniekirk.mastodroid.feature.feed.navigation.navigateToFeed
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.instanceListScreen
 import me.cniekirk.mastodroid.feature.instanceselection.navigation.navigateToInstanceList
+import me.cniekirk.mastodroid.feature.onboarding.navigation.ONBOARDING_NAVIGATION_ROUTE
 import me.cniekirk.mastodroid.feature.onboarding.navigation.navigateToOnboarding
 import me.cniekirk.mastodroid.feature.onboarding.navigation.onboardingScreen
 import me.cniekirk.mastodroid.feature.settings.navigation.navigateToSettings
@@ -73,7 +75,7 @@ fun RootNavHost(
                 navController = innerController,
                 displayFeatures = displayFeatures,
                 onSettingsPressed = { navController.navigateToSettings() },
-                onNavigateToLogin = { navController.navigateToOnboarding() }
+                onNavigateToLogin = { navController.navigateToOnboarding(RootDestinations.Tabs.route) }
             )
         }
 
@@ -84,11 +86,18 @@ fun RootNavHost(
             onSearchForServerClicked = {},
             onLoginClicked = { navController.navigateToInstanceList(true) }
         )
+
         instanceListScreen(
             onBackPressed = navController::popBackStack
         )
+
         codeReceiverScreen(
-            tokenSaved = { navController.navigate(RootDestinations.Tabs.route) }
+            tokenSaved = {
+                navController.navigate(RootDestinations.Tabs.route) {
+                    // Remove everything from the backstack once auth is complete
+                    popUpTo(RootDestinations.Tabs.route) { inclusive = true }
+                }
+            }
         )
     }
 }
@@ -134,7 +143,7 @@ fun MastodroidTabContainer(
                             // Restore state when reselecting a previously selected item
                             restoreState = true
                         }
-                    }
+                    },
                 )
             }
         },

@@ -10,7 +10,9 @@ import me.cniekirk.mastodroid.feature.onboarding.OnboardingScreen
 
 const val ONBOARDING_NAVIGATION_ROUTE = "onboarding_route"
 
-fun NavController.navigateToOnboarding() = this.navigate(ONBOARDING_NAVIGATION_ROUTE)
+fun NavController.navigateToOnboarding(route: String) = this.navigate(ONBOARDING_NAVIGATION_ROUTE) {
+    popUpTo(route) { inclusive = true }
+}
 
 fun NavGraphBuilder.onboardingScreen(
     onJoinDefaultClicked: () -> Unit,
